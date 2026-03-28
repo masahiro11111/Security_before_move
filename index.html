@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東京都 地域安全ダッシュボード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg0:#ffffff;--bg1:#f6f5f0;--bg2:#eeede8;
+  --t1:#1a1a18;--t2:#5f5e5a;--t3:#9b9a94;
+  --b1:rgba(0,0,0,.1);--b2:rgba(0,0,0,.18);
+  --red:#E24B4A;--blue:#378ADD;--green:#1D9E75;--amber:#EF9F27;
+  --r8:8px;--r12:12px;--r16:16px;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg0:#1c1c1a;--bg1:#242422;--bg2:#2e2e2c;--t1:#e8e6de;--t2:#9c9a92;--t3:#6b6a64;--b1:rgba(255,255,255,.09);--b2:rgba(255,255,255,.16)}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg1);color:var(--t1);font-size:14px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+
+/* Header */
+.hdr{background:var(--bg0);border-bottom:.5px solid var(--b1);position:sticky;top:0;z-index:100}
+.hdr-in{max-width:980px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdr-title{font-size:15px;font-weight:700;color:var(--t1)}
+.hdr-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.hdr-r{display:flex;align-items:center;gap:10px;font-size:12px;flex-wrap:wrap}
+.updated{color:var(--t3)}
+.updated span{color:var(--t2);font-weight:500}
+.src-links{display:flex;gap:8px}
+.src-links a{font-size:11px;color:var(--blue);text-decoration:underline}
+
+/* Main */
+.main{max-width:980px;margin:0 auto;padding:1.25rem}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.tab{padding:6px 16px;border:.5px solid var(--b1);border-radius:20px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit}
+.tab:hover{border-color:var(--b2);color:var(--t1)}
+.tab.on{background:var(--t1);color:var(--bg0);border-color:transparent}
+
+/* Section */
+.sec{display:none}.sec.on{display:block}
+
+/* Loading */
+.loading{text-align:center;padding:4rem;color:var(--t3);font-size:14px}
+.err{background:#fcebeb;border:.5px solid #f09595;border-radius:var(--r8);padding:.75rem 1rem;color:#a32d2d;font-size:13px;margin-bottom:1rem;display:none}
+
+/* Metrics */
+.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:1.25rem}
+.met{background:var(--bg2);border-radius:var(--r8);padding:.875rem 1rem}
+.met-l{font-size:11px;color:var(--t3);margin-bottom:4px}
+.met-v{font-size:21px;font-weight:700;color:var(--t1);line-height:1.2}
+.met-t{font-size:11px;margin-top:4px}
+.up{color:#c04828}.dn{color:var(--green)}
+
+/* Card */
+.card{background:var(--bg0);border:.5px solid var(--b1);border-radius:var(--r16);padding:1.25rem;margin-bottom:1.25rem}
+.card-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.card-desc{font-size:12px;color:var(--t2);margin-bottom:1rem}
+.card-desc select{font-size:12px;padding:3px 6px;border:.5px solid var(--b2);border-radius:6px;background:var(--bg2);color:var(--t1);margin-left:4px;font-family:inherit}
+.cw{position:relative;width:100%}
+.leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:.75rem;font-size:12px;color:var(--t2)}
+.ld{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+.src-note{font-size:11px;color:var(--t3);margin-bottom:1rem}
+
+/* Table */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:11px;font-weight:600;color:var(--t3);padding:6px 10px;border-bottom:.5px solid var(--b1);text-align:left;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:.5px solid var(--b1);color:var(--t1);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg2)}
+.bar{height:6px;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:6px;min-width:2px}
+
+/* Filter row */
+.frow{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.frow label{font-size:13px;color:var(--t2)}
+.frow select,.frow input{font-size:13px;padding:5px 8px;border:.5px solid var(--b2);border-radius:var(--r8);background:var(--bg2);color:var(--t1);font-family:inherit}
+.frow input{width:160px}
+
+/* Info box */
+.info{background:rgba(55,138,221,.1);border:.5px solid rgba(55,138,221,.35);border-radius:var(--r8);padding:.75rem 1rem;font-size:12px;color:var(--blue);margin-bottom:1.25rem}
+
+@media(max-width:600px){.hdr-in{flex-direction:column;align-items:flex-start}.met-v{font-size:18px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div>
+      <div class="hdr-title">🏙 東京都 地域安全・人口動態ダッシュボード</div>
+      <div class="hdr-sub">引越し前に確認できる治安・人口指標 ／ 出典：警視庁・東京都統計局</div>
+    </div>
+    <div class="hdr-r">
+      <div class="updated">最終更新：<span id="js-updated">読み込み中…</span></div>
+      <div class="src-links">
+        <a href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">警視庁</a>
+        <a href="https://www.toukei.metro.tokyo.lg.jp/gaikoku/ga-index.htm" target="_blank">東京都統計局</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <nav class="tabs">
+    <button class="tab on" data-s="overview">概要</button>
+    <button class="tab" data-s="crime">犯罪件数</button>
+    <button class="tab" data-s="foreign">外国人人口</button>
+    <button class="tab" data-s="children">子供の数</button>
+    <button class="tab" data-s="ranking">区市町村ランキング</button>
+  </nav>
+
+  <div id="js-loading" class="loading">データを読み込んでいます…</div>
+  <div id="js-err" class="err"></div>
+
+  <!-- 概要 -->
+  <section class="sec on" id="s-overview">
+    <div class="info">最新データ：令和5年（2023年）／ 毎月自動更新（GitHub Actions）</div>
+    <div class="mets" id="js-mets"></div>
+    <div class="card">
+      <div class="card-title">主要3指標の年次推移（2019〜2023年）</div>
+      <div class="card-desc">2019年を100とした指数。コロナ禍で犯罪は急減→反転、外国人は2023年に過去最多。</div>
+      <div class="cw" style="height:280px"><canvas id="c-ov"></canvas></div>
+      <div class="leg">
+        <span><span class="ld" style="background:var(--red)"></span>刑法犯認知件数</span>
+        <span><span class="ld" style="background:var(--blue)"></span>外国人人口</span>
+        <span><span class="ld" style="background:var(--green)"></span>14歳以下人口</span>
+      </div>
+    </div>
+    <p class="src-note">出典：警視庁「東京の犯罪（令和5年版）」、東京都統計局「外国人人口」「住民基本台帳」</p>
+  </section>
+
+  <!-- 犯罪 -->
+  <section class="sec" id="s-crime">
+    <div class="card">
+      <div class="card-title">刑法犯認知件数の長期推移（東京都全体）</div>
+      <div class="card-desc">2014年をピークに大幅減少。コロナ禍の2021年に底を打ち、2022年より増加傾向に転換。</div>
+      <div class="cw" style="height:280px"><canvas id="c-crime-tr"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">区別 刑法犯認知件数（2023年）</div>
+      <div class="card-desc">
+        表示切替：<select id="crime-mode" onchange="renderCrimeBar()">
+          <option value="total">総件数</option>
+          <option value="rate">人口10万人あたり</option>
+        </select>
+      </div>
+      <div class="cw" style="height:420px"><canvas id="c-crime-bar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">犯罪種別の構成（東京都・2023年）</div>
+      <div class="card-desc">窃盗犯が約70%。詐欺・暴行傷害が続く。</div>
+      <div class="cw" style="height:260px"><canvas id="c-crime-type"></canvas></div>
+    </div>
+    <p class="src-note">出典：警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」</p>
+  </section>
+
+  <!-- 外国人 -->
+  <section class="sec" id="s-foreign">
+    <div class="card">
+      <div class="card-title">外国人人口の年次推移（東京都全体）</div>
+      <div class="card-desc">コロナ禍で一時減少。2023年に579,367人と過去最多を更新。</div>
+      <div class="cw" style="height:280px"><canvas id="c-fo-tr"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">外国人割合が高い区（2024年）</div>
+      <div class="card-desc">新宿区12.5%、豊島区11.2%、荒川区9.7%が上位。</div>
+      <div class="cw" style="height:420px"><canvas id="c-fo-bar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">国籍・地域別 外国人人口構成（東京都・2023年）</div>
+      <div class="card-desc">中国籍が最多（約34%）。ベトナム・ネパールは近年増加顕著。</div>
+      <div class="cw" style="height:260px"><canvas id="c-fo-pie"></canvas></div>
+    </div>
+    <p class="src-note">出典：東京都統計局「外国人人口（令和5年）」、出入国在留管理庁「在留外国人統計」</p>
+  </section>
+
+  <!-- 子供 -->
+  <section class="sec" id="s-children">
+    <div class="card">
+      <div class="card-title">14歳以下人口の年次推移（東京都全体）</div>
+      <div class="card-desc">少子化が続き、5年間で約55,000人減少。</div>
+      <div class="cw" style="height:280px"><canvas id="c-ch-tr"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">14歳以下の子供が多い区（2023年）</div>
+      <div class="card-desc">世田谷区・練馬区・江戸川区が上位。子育て世帯に人気のエリア。</div>
+      <div class="cw" style="height:420px"><canvas id="c-ch-bar"></canvas></div>
+    </div>
+    <p class="src-note">出典：東京都統計局「住民基本台帳による東京都の世帯と人口」</p>
+  </section>
+
+  <!-- ランキング -->
+  <section class="sec" id="s-ranking">
+    <div class="card">
+      <div class="frow">
+        <label>並び替え：</label>
+        <select id="rank-key" onchange="renderRanking()">
+          <option value="crime">犯罪件数（多い順）</option>
+          <option value="crime_rate">犯罪率 10万人あたり（多い順）</option>
+          <option value="foreign_pct">外国人割合（多い順）</option>
+          <option value="child_pct">子供割合（多い順）</option>
+          <option value="crime_asc">犯罪件数（少ない順）</option>
+        </select>
+        <input type="text" id="rank-filter" placeholder="区名で絞り込み…" oninput="renderRanking()">
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>#</th><th>区・市</th><th>総人口</th>
+            <th>犯罪件数</th><th>犯罪率</th>
+            <th>外国人数</th><th>外国人割合</th>
+            <th>子供数</th><th>子供割合</th>
+          </tr></thead>
+          <tbody id="rank-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="src-note">出典：警視庁（2023年）、東京都統計局（2023〜2024年）</p>
+  </section>
+</main>
+
+<script>
+// ─── データファイルのパス（GitHub Pages用）─────────────────────────────────
+// リポジトリ名が変わる場合はここを修正してください
+const DATA_URL = './data/tokyo_safety.json';
+
+let G = null;
+let crimeBarInst = null;
+
+const dark = matchMedia('(prefers-color-scheme:dark)').matches;
+const gc = a => dark ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+const TC = dark ? '#9c9a92' : '#73726c';
+const GC = gc(0.07);
+
+// ─── 初期化 ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tab').forEach(btn =>
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+      btn.classList.add('on');
+      document.getElementById('s-' + btn.dataset.s).classList.add('on');
+    })
+  );
+  fetchData();
+});
+
+async function fetchData() {
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    G = await res.json();
+    document.getElementById('js-loading').style.display = 'none';
+    const d = new Date(G.updated_at);
+    document.getElementById('js-updated').textContent =
+      isNaN(d) ? G.updated_at : d.toLocaleDateString('ja-JP') + ' 更新';
+    renderAll();
+  } catch (e) {
+    document.getElementById('js-loading').style.display = 'none';
+    const el = document.getElementById('js-err');
+    el.style.display = 'block';
+    el.textContent = 'データの読み込みに失敗しました: ' + e.message;
+  }
+}
+
+// ─── Chart共通設定 ────────────────────────────────────────────────────────
+Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = TC;
+
+const baseOpts = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { color: GC }, ticks: { color: TC } },
+    y: { grid: { color: GC }, ticks: { color: TC } }
+  }
+};
+
+function mkLine(id, labels, datasets) {
+  new Chart(document.getElementById(id), {
+    type: 'line', data: { labels, datasets },
+    options: JSON.parse(JSON.stringify(baseOpts))
+  });
+}
+function mkBar(id, labels, data, color, horiz) {
+  return new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 4, borderSkipped: false }] },
+    options: {
+      ...JSON.parse(JSON.stringify(baseOpts)),
+      indexAxis: horiz ? 'y' : 'x',
+      scales: {
+        x: { grid: { color: GC }, ticks: { color: TC, autoSkip: false } },
+        y: { grid: { color: GC }, ticks: { color: TC, autoSkip: false, font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+// ─── 全描画 ───────────────────────────────────────────────────────────────
+function renderAll() {
+  renderOverview();
+  renderCrimeTrend();
+  renderCrimeBar();
+  renderCrimeType();
+  renderForeignTrend();
+  renderForeignBar();
+  renderForeignPie();
+  renderChildTrend();
+  renderChildBar();
+  renderRanking();
+}
+
+// 概要
+function renderOverview() {
+  const t = G.trend;
+  const yrs = Object.keys(t.crime_total).slice(-5);
+  const cr = yrs.map(y => t.crime_total[y]);
+  const fo = yrs.map(y => t.foreign_total[y] || null);
+  const ch = yrs.map(y => t.child_total[y] || null);
+  const idx = (a, i) => a.map(v => v ? Math.round(v / a[i] * 100) : null);
+
+  document.getElementById('js-mets').innerHTML = `
+    <div class="met"><div class="met-l">刑法犯認知件数（2023年）</div>
+      <div class="met-v">${cr.at(-1).toLocaleString()}</div>
+      <div class="met-t up">▲ 前年比 +8.3%</div></div>
+    <div class="met"><div class="met-l">外国人人口（2023年）</div>
+      <div class="met-v">${fo.at(-1).toLocaleString()}</div>
+      <div class="met-t up">▲ 前年比 +11.8%</div></div>
+    <div class="met"><div class="met-l">14歳以下人口（2023年）</div>
+      <div class="met-v">${(ch.at(-1)/10000).toFixed(0)}万人</div>
+      <div class="met-t dn">▼ 前年比 −0.8%</div></div>
+    <div class="met"><div class="met-l">人口10万人あたり犯罪件数</div>
+      <div class="met-v">697</div>
+      <div class="met-t">2019年比 −12%</div></div>`;
+
+  mkLine('c-ov', yrs, [
+    { data: idx(cr,0), borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.1)', tension:.4, fill:true, pointRadius:4 },
+    { data: idx(fo,0), borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.1)', tension:.4, fill:true, pointRadius:4 },
+    { data: idx(ch,0), borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,.1)', tension:.4, fill:true, pointRadius:4 },
+  ]);
+}
+
+// 犯罪推移
+function renderCrimeTrend() {
+  const t = G.trend.crime_total;
+  const yrs = Object.keys(t);
+  mkLine('c-crime-tr', yrs, [{
+    data: yrs.map(y => t[y]),
+    borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.1)', tension:.3, fill:true, pointRadius:4
+  }]);
+}
+
+// 犯罪バー（切り替え対応）
+function renderCrimeBar() {
+  if (crimeBarInst) crimeBarInst.destroy();
+  const mode = document.getElementById('crime-mode').value;
+  const sorted = [...G.wards]
+    .sort((a,b) => mode==='rate' ? b.crime_rate-a.crime_rate : b.crime-a.crime)
+    .slice(0,15);
+  crimeBarInst = mkBar('c-crime-bar',
+    sorted.map(w=>w.name),
+    sorted.map(w => mode==='rate' ? w.crime_rate : w.crime),
+    '#E24B4A', true);
+}
+
+// 犯罪種別
+function renderCrimeType() {
+  const labs = Object.keys(G.crime_type);
+  const data = Object.values(G.crime_type);
+  new Chart(document.getElementById('c-crime-type'), {
+    type: 'doughnut',
+    data: { labels: labs, datasets: [{
+      data, borderWidth:2,
+      borderColor: dark ? '#242422' : '#fff',
+      backgroundColor:['#E24B4A','#EF9F27','#378ADD','#7F77DD','#D4537E','#888780']
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ color:TC, font:{size:12}, padding:12 } } } }
+  });
+}
+
+// 外国人推移
+function renderForeignTrend() {
+  const t = G.trend.foreign_total;
+  const yrs = Object.keys(t);
+  mkLine('c-fo-tr', yrs, [{
+    data: yrs.map(y=>t[y]),
+    borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.1)', tension:.4, fill:true, pointRadius:4
+  }]);
+}
+
+// 外国人バー
+function renderForeignBar() {
+  const s = [...G.wards].sort((a,b)=>b.foreign_pct-a.foreign_pct).slice(0,15);
+  mkBar('c-fo-bar', s.map(w=>w.name), s.map(w=>w.foreign_pct), '#378ADD', true);
+}
+
+// 外国人円グラフ
+function renderForeignPie() {
+  const labs = Object.keys(G.foreign_nationality);
+  const data = Object.values(G.foreign_nationality);
+  new Chart(document.getElementById('c-fo-pie'), {
+    type:'doughnut',
+    data:{ labels:labs, datasets:[{
+      data, borderWidth:2,
+      borderColor: dark ? '#242422' : '#fff',
+      backgroundColor:['#E24B4A','#EF9F27','#378ADD','#1D9E75','#7F77DD','#D4537E','#888780']
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ color:TC, font:{size:12}, padding:10 } } } }
+  });
+}
+
+// 子供推移
+function renderChildTrend() {
+  const t = G.trend.child_total;
+  const yrs = Object.keys(t);
+  mkLine('c-ch-tr', yrs, [{
+    data: yrs.map(y=>t[y]),
+    borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,.1)', tension:.4, fill:true, pointRadius:4
+  }]);
+}
+
+// 子供バー
+function renderChildBar() {
+  const s = [...G.wards].sort((a,b)=>b.child-a.child).slice(0,15);
+  mkBar('c-ch-bar', s.map(w=>w.name), s.map(w=>Math.round(w.child/1000)), '#1D9E75', true);
+}
+
+// ランキング
+function renderRanking() {
+  const key = document.getElementById('rank-key').value;
+  const filt = (document.getElementById('rank-filter').value||'').trim();
+  const asc = key.endsWith('_asc');
+  const sk = asc ? key.replace('_asc','') : key;
+  let wards = [...G.wards];
+  if (filt) wards = wards.filter(w => w.name.includes(filt));
+  wards.sort((a,b) => asc ? a[sk]-b[sk] : b[sk]-a[sk]);
+  const mC = Math.max(...G.wards.map(w=>w.crime));
+  const mF = Math.max(...G.wards.map(w=>w.foreign_pct));
+  const mCh = Math.max(...G.wards.map(w=>w.child_pct));
+  document.getElementById('rank-body').innerHTML = wards.map((w,i)=>`
+    <tr>
+      <td style="color:var(--t3);font-size:12px">${i+1}</td>
+      <td style="font-weight:700">${w.name}</td>
+      <td>${w.population.toLocaleString()}</td>
+      <td>${w.crime.toLocaleString()}<span class="bar" style="width:${Math.round(w.crime/mC*48)}px;background:#E24B4A88"></span></td>
+      <td>${w.crime_rate.toLocaleString()}</td>
+      <td>${w.foreign.toLocaleString()}</td>
+      <td>${w.foreign_pct}%<span class="bar" style="width:${Math.round(w.foreign_pct/mF*48)}px;background:#378ADD88"></span></td>
+      <td>${w.child.toLocaleString()}</td>
+      <td>${w.child_pct}%<span class="bar" style="width:${Math.round(w.child_pct/mCh*48)}px;background:#1D9E7588"></span></td>
+    </tr>`).join('');
+}
+</script>
+</body>
+</html>
