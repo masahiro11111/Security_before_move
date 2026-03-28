@@ -3,39 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>東京都 地域安全ダッシュボード｜引越し前に確認</title>
+<title>地域安全ダッシュボード｜引越し前に確認できる治安・生活情報</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-/* ─── 白ベース・安心感カラー ─── */
 :root{
-  --white:#ffffff;
-  --bg:#f7f8fc;
-  --card:#ffffff;
-  --border:#e8eaf0;
-  --border2:#d0d4e0;
-  --t1:#1a1d2e;
-  --t2:#4a5068;
-  --t3:#8b90a8;
-  --t4:#c0c4d6;
-  --blue:#3b82f6;
-  --blue-l:#eff6ff;
-  --blue-d:#1d4ed8;
-  --green:#10b981;
-  --green-l:#ecfdf5;
-  --green-d:#047857;
-  --amber:#f59e0b;
-  --amber-l:#fffbeb;
-  --red:#ef4444;
-  --red-l:#fef2f2;
-  --purple:#8b5cf6;
-  --purple-l:#f5f3ff;
-  --teal:#14b8a6;
-  --teal-l:#f0fdfa;
-  --r6:6px;--r10:10px;--r16:16px;--r20:20px;
-  --shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
-  --shadow-sm:0 1px 3px rgba(0,0,0,.05);
+  --white:#fff;--bg:#f4f6fb;--card:#fff;
+  --border:#e2e6f0;--border2:#c8cedd;
+  --t1:#1a1d2e;--t2:#4a5068;--t3:#8b90a8;--t4:#bfc4d6;
+  --blue:#3b82f6;--blue-l:#eff6ff;--blue-d:#1d4ed8;
+  --green:#10b981;--green-l:#ecfdf5;--green-d:#047857;
+  --amber:#f59e0b;--amber-l:#fffbeb;--amber-d:#92400e;
+  --red:#ef4444;--red-l:#fef2f2;--red-d:#991b1b;
+  --purple:#8b5cf6;--purple-l:#f5f3ff;
+  --r6:6px;--r10:10px;--r16:16px;
+  --sh:0 1px 3px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.06);
+  --sh-sm:0 1px 3px rgba(0,0,0,.04);
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;
   background:var(--bg);color:var(--t1);font-size:14px;line-height:1.65;
@@ -43,578 +26,494 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 
 /* ─── Header ─── */
 .hdr{background:var(--white);border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:300;box-shadow:var(--shadow-sm)}
-.hdr-in{max-width:1060px;margin:0 auto;padding:.75rem 1.5rem;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  position:sticky;top:0;z-index:300;box-shadow:var(--sh-sm)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:.7rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),#6366f1);
-  border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0}
-.logo-text .title{font-size:15px;font-weight:700;color:var(--t1);line-height:1.2}
-.logo-text .sub{font-size:11px;color:var(--t3);margin-top:1px}
-.hdr-r{display:flex;align-items:center;gap:12px}
-.updated-pill{background:var(--green-l);color:var(--green-d);font-size:11px;
-  padding:4px 10px;border-radius:20px;font-weight:600;white-space:nowrap}
-.src-btn{font-size:11px;color:var(--blue);text-decoration:none;
-  padding:4px 10px;border:1px solid var(--border2);border-radius:20px;
-  transition:background .15s}
-.src-btn:hover{background:var(--blue-l)}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#1e40af,#3b82f6);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-title{font-size:14px;font-weight:700;color:var(--t1)}
+.logo-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.hdr-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill-updated{background:var(--green-l);color:var(--green-d);font-size:11px;
+  padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.pill-link{font-size:11px;color:var(--blue);padding:3px 9px;border:1px solid var(--border2);
+  border-radius:20px;cursor:pointer;text-decoration:none;background:var(--white)}
+.pill-link:hover{background:var(--blue-l)}
 
-/* ─── Search Hero ─── */
-.hero{background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 50%,#0ea5e9 100%);
-  padding:2rem 1.5rem}
-.hero-in{max-width:1060px;margin:0 auto}
-.hero-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:1.25rem}
-.search-wrap{position:relative;max-width:520px}
-.search-row{display:flex;gap:8px;align-items:center}
-.search-box{flex:1;display:flex;align-items:center;
-  background:var(--white);border-radius:var(--r10);
-  box-shadow:0 4px 20px rgba(0,0,0,.15);overflow:hidden}
-.search-icon{padding:0 12px;color:var(--t3);font-size:18px;flex-shrink:0}
-.search-input{flex:1;padding:13px 4px;font-size:15px;border:none;outline:none;
+/* ─── City Selector ─── */
+.city-bar{background:var(--white);border-bottom:1px solid var(--border);padding:.6rem 1.25rem}
+.city-bar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.city-label{font-size:12px;color:var(--t3);font-weight:600;white-space:nowrap}
+.city-btn{padding:6px 16px;border:1.5px solid var(--border2);border-radius:20px;
+  background:var(--white);color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;
+  transition:all .15s;font-weight:500}
+.city-btn:hover{border-color:var(--blue);color:var(--blue)}
+.city-btn.on{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+
+/* ─── Hero Search ─── */
+.hero{background:linear-gradient(135deg,#1e3a8a,#2563eb 55%,#0ea5e9);padding:1.75rem 1.25rem}
+.hero-in{max-width:1080px;margin:0 auto}
+.hero-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:1.1rem}
+.search-wrap{position:relative;max-width:500px}
+.search-box{display:flex;background:var(--white);border-radius:var(--r10);
+  box-shadow:0 4px 16px rgba(0,0,0,.2);overflow:hidden;align-items:center}
+.s-icon{padding:0 12px;color:var(--t3);font-size:17px;flex-shrink:0}
+.s-input{flex:1;padding:12px 4px;font-size:14px;border:none;outline:none;
   background:transparent;color:var(--t1);font-family:inherit}
-.search-input::placeholder{color:var(--t4)}
-.search-clear{padding:0 14px;background:none;border:none;cursor:pointer;
-  color:var(--t3);font-size:20px;display:none;line-height:1}
-.suggest-list{position:absolute;top:calc(100% + 6px);left:0;right:0;
-  background:var(--white);border-radius:var(--r10);
-  box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:500;
-  max-height:280px;overflow-y:auto;display:none}
-.suggest-list.show{display:block}
-.sug-item{padding:10px 16px;cursor:pointer;font-size:14px;
-  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.s-input::placeholder{color:var(--t4)}
+.s-clear{padding:0 13px;background:none;border:none;cursor:pointer;
+  color:var(--t3);font-size:18px;display:none;line-height:1}
+.sug{position:absolute;top:calc(100%+5px);left:0;right:0;background:var(--white);
+  border-radius:var(--r10);box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:500;
+  max-height:260px;overflow-y:auto;display:none}
+.sug.show{display:block}
+.sug-item{padding:9px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px}
 .sug-item:last-child{border-bottom:none}
 .sug-item:hover,.sug-item.focus{background:var(--blue-l)}
 .sug-item .hi{color:var(--blue);font-weight:700}
-.sug-grade{display:inline-block;width:22px;height:22px;border-radius:50%;
-  font-size:11px;font-weight:700;text-align:center;line-height:22px;flex-shrink:0}
-.sg-A{background:#dcfce7;color:#166534} .sg-B{background:#dbeafe;color:#1e40af}
-.sg-C{background:#fef9c3;color:#854d0e} .sg-D{background:#fee2e2;color:#991b1b}
-.sg-E{background:#fce7f3;color:#9d174d}
-.hero-tags{display:flex;gap:8px;margin-top:.875rem;flex-wrap:wrap}
-.tag{background:rgba(255,255,255,.2);color:#fff;font-size:11px;
-  padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid rgba(255,255,255,.3);
-  transition:background .15s}
-.tag:hover{background:rgba(255,255,255,.35)}
+.sug-grade{width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;
+  text-align:center;line-height:20px;flex-shrink:0}
+.gA{background:#dcfce7;color:#166534}.gB{background:#dbeafe;color:#1e40af}
+.gC{background:#fef9c3;color:#854d0e}.gD{background:#fee2e2;color:#991b1b}
+.gE{background:#fce7f3;color:#9d174d}
+.quick-tags{display:flex;gap:6px;margin-top:.8rem;flex-wrap:wrap}
+.qtag{background:rgba(255,255,255,.18);color:#fff;font-size:11px;
+  padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid rgba(255,255,255,.3)}
+.qtag:hover{background:rgba(255,255,255,.32)}
 
 /* ─── Ward Detail ─── */
-.ward-wrap{max-width:1060px;margin:.875rem auto 0;padding:0 1.5rem;display:none}
-.ward-card{background:var(--white);border-radius:var(--r16);
-  box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
-.ward-head{background:linear-gradient(135deg,#1e3a8a,#3b82f6);
-  padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
-.ward-name-area .ward-name{font-size:24px;font-weight:700;color:#fff}
-.ward-name-area .ward-pop{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px}
-.ward-score-area{text-align:right}
-.score-lbl{font-size:11px;color:rgba(255,255,255,.75)}
-.score-num{font-size:42px;font-weight:700;color:#fff;line-height:1}
-.score-grade{display:inline-block;padding:4px 12px;border-radius:20px;
-  font-size:12px;font-weight:700;margin-top:6px}
-.gA{background:#dcfce7;color:#166534} .gB{background:#dbeafe;color:#1e40af}
-.gC{background:#fef9c3;color:#854d0e} .gD{background:#fee2e2;color:#991b1b}
-.gE{background:#fce7f3;color:#9d174d}
-.ward-body{padding:1.25rem 1.5rem}
-.ward-mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.25rem}
-.wm{background:var(--bg);border-radius:var(--r10);padding:.875rem 1rem;
-  border:1px solid var(--border)}
-.wm-icon{font-size:20px;margin-bottom:5px}
-.wm-lbl{font-size:11px;color:var(--t3);margin-bottom:3px}
-.wm-val{font-size:17px;font-weight:700;color:var(--t1);line-height:1.2}
-.wm-sub{font-size:11px;color:var(--t3);margin-top:3px}
-.ward-section-title{font-size:13px;font-weight:700;color:var(--t2);
-  margin-bottom:.75rem;padding-bottom:6px;border-bottom:2px solid var(--blue-l)}
-.wd-bars{margin-bottom:1.25rem}
-.br-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
-.br-lbl{width:145px;color:var(--t2);text-align:right;flex-shrink:0}
-.br-track{flex:1;height:8px;background:var(--bg);border-radius:4px;
-  overflow:hidden;border:1px solid var(--border)}
+.wd-wrap{max-width:1080px;margin:.875rem auto 0;padding:0 1.25rem;display:none}
+.wd-card{background:var(--white);border-radius:var(--r16);box-shadow:var(--sh);border:1px solid var(--border);overflow:hidden}
+.wd-head{background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:1.25rem 1.5rem;
+  display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+.wd-name{font-size:22px;font-weight:700;color:#fff}
+.wd-city{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
+.wd-score-side{text-align:right}
+.wd-score-lbl{font-size:11px;color:rgba(255,255,255,.7)}
+.wd-score-num{font-size:40px;font-weight:700;color:#fff;line-height:1}
+.wd-grade-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:5px}
+.wd-body{padding:1.25rem 1.5rem}
+.wd-sec{font-size:12px;font-weight:700;color:var(--t2);border-bottom:2px solid var(--blue-l);
+  padding-bottom:5px;margin-bottom:.875rem;margin-top:1rem}
+.wd-sec:first-of-type{margin-top:0}
+.wd-mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:.5rem}
+.wd-met{background:var(--bg);border-radius:var(--r10);padding:.75rem;border:1px solid var(--border)}
+.wd-met-icon{font-size:18px;margin-bottom:3px}
+.wd-met-lbl{font-size:10px;color:var(--t3);margin-bottom:2px;font-weight:600}
+.wd-met-val{font-size:16px;font-weight:700;color:var(--t1);line-height:1.2}
+.wd-met-unit{font-size:10px;font-weight:400;margin-left:2px;color:var(--t2)}
+.wd-met-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.wd-bars{margin-bottom:.5rem}
+.br-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.br-lbl{width:150px;color:var(--t2);text-align:right;flex-shrink:0;font-size:11px}
+.br-track{flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
 .br-fill{height:100%;border-radius:4px;transition:width .5s ease}
-.br-val{width:60px;color:var(--t2);font-size:11px}
-.ward-rent-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.25rem}
-.rent-box{background:var(--blue-l);border-radius:var(--r10);padding:.75rem;
-  border:1px solid #bfdbfe;text-align:center}
-.rent-box-lbl{font-size:11px;color:#1d4ed8;margin-bottom:4px}
-.rent-box-val{font-size:18px;font-weight:700;color:#1e40af}
-.ward-close-row{text-align:right;margin-top:.5rem}
-.ward-close{padding:7px 18px;border:1px solid var(--border2);border-radius:20px;
-  background:var(--white);color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit}
+.br-val{width:68px;color:var(--t2);font-size:11px}
+.wd-rent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:.5rem}
+.wd-rent-box{background:var(--blue-l);border-radius:var(--r10);padding:.75rem;text-align:center;border:1px solid #bfdbfe}
+.wd-rent-lbl{font-size:10px;color:var(--blue-d);font-weight:600;margin-bottom:3px}
+.wd-rent-val{font-size:17px;font-weight:700;color:#1e40af}
+.wd-rent-unit{font-size:10px;font-weight:400}
+.wd-close-row{text-align:right;margin-top:.875rem}
+.wd-close{padding:6px 16px;border:1px solid var(--border2);border-radius:20px;
+  background:var(--white);color:var(--t2);cursor:pointer;font-size:12px;font-family:inherit}
 
-/* ─── Main Layout ─── */
-.main{max-width:1060px;margin:0 auto;padding:1.25rem 1.5rem}
+/* ─── Main ─── */
+.main{max-width:1080px;margin:0 auto;padding:1.25rem}
 
 /* ─── Tabs ─── */
-.tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;
-  background:var(--white);padding:.5rem;border-radius:var(--r16);
-  box-shadow:var(--shadow-sm);border:1px solid var(--border)}
-.tab{padding:7px 16px;border-radius:var(--r10);background:transparent;
-  color:var(--t2);font-size:13px;cursor:pointer;border:none;
-  transition:all .15s;font-family:inherit;font-weight:500}
+.tabs{display:flex;gap:5px;margin-bottom:1.1rem;flex-wrap:wrap;
+  background:var(--white);padding:.4rem .5rem;border-radius:var(--r16);
+  box-shadow:var(--sh-sm);border:1px solid var(--border)}
+.tab{padding:6px 13px;border-radius:var(--r10);background:transparent;
+  color:var(--t2);font-size:12px;cursor:pointer;border:none;font-family:inherit;
+  transition:all .15s;font-weight:500;white-space:nowrap}
 .tab:hover{background:var(--bg);color:var(--t1)}
-.tab.on{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.tab.on{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(59,130,246,.3)}
 
 .sec{display:none}.sec.on{display:block}
-.loading{text-align:center;padding:5rem;color:var(--t3);font-size:14px}
+.loading{text-align:center;padding:4rem;color:var(--t3)}
 .errmsg{background:var(--red-l);border:1px solid #fecaca;border-radius:var(--r10);
-  padding:.875rem 1rem;color:#991b1b;font-size:13px;margin-bottom:1rem;display:none}
+  padding:.75rem 1rem;color:var(--red-d);font-size:13px;margin-bottom:1rem;display:none}
 
-/* ─── Metric Cards ─── */
-.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.25rem}
-.met{background:var(--white);border-radius:var(--r16);padding:1rem 1.1rem;
-  border:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.met-icon{font-size:22px;margin-bottom:6px}
-.met-l{font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500}
-.met-v{font-size:21px;font-weight:700;color:var(--t1);line-height:1.2}
-.met-t{font-size:11px;margin-top:5px;font-weight:500}
-.up{color:#dc2626}.dn{color:var(--green-d)}.neu{color:var(--t3)}
+/* ─── Cards ─── */
+.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:1.1rem}
+.met{background:var(--white);border-radius:var(--r16);padding:.9rem 1rem;
+  border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.met-icon{font-size:20px;margin-bottom:5px}
+.met-l{font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:600}
+.met-v{font-size:19px;font-weight:700;line-height:1.2}
+.met-unit{font-size:11px;font-weight:400;margin-left:2px;color:var(--t2)}
+.met-t{font-size:10px;margin-top:4px;font-weight:500}
+.up{color:#dc2626}.dn{color:var(--green-d)}
 
-/* ─── Chart Card ─── */
-.card{background:var(--white);border-radius:var(--r16);padding:1.25rem 1.5rem;
-  margin-bottom:1.25rem;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.card-header{display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:.875rem;gap:12px;flex-wrap:wrap}
-.card-title{font-size:15px;font-weight:700;color:var(--t1)}
-.card-badge{font-size:11px;background:var(--blue-l);color:var(--blue-d);
-  padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap}
-.card-desc{font-size:12px;color:var(--t2);margin-bottom:1rem;line-height:1.6}
-.card-desc select{font-size:12px;padding:4px 8px;border:1px solid var(--border2);
-  border-radius:var(--r6);background:var(--bg);color:var(--t1);margin-left:4px;font-family:inherit}
+.card{background:var(--white);border-radius:var(--r16);padding:1.1rem 1.25rem;
+  margin-bottom:1.1rem;border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:.75rem;flex-wrap:wrap}
+.card-title{font-size:14px;font-weight:700;color:var(--t1)}
+.card-badge{font-size:10px;background:var(--blue-l);color:var(--blue-d);
+  padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.card-desc{font-size:12px;color:var(--t2);margin-bottom:.875rem;line-height:1.6}
+.card-desc select,.card-desc .sel{font-size:12px;padding:3px 7px;border:1px solid var(--border2);
+  border-radius:var(--r6);background:var(--bg);color:var(--t1);margin-left:3px;font-family:inherit}
+.unit-note{display:inline-block;font-size:10px;color:var(--t3);background:var(--bg);
+  padding:2px 7px;border-radius:20px;border:1px solid var(--border);margin-left:6px}
 .cw{position:relative;width:100%}
-.leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:.875rem;font-size:12px;color:var(--t2)}
-.ld{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin-top:.75rem;font-size:11px;color:var(--t2)}
+.ld{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
 
-/* ─── Info / Notice ─── */
-.notice{background:var(--blue-l);border:1px solid #bfdbfe;border-radius:var(--r10);
-  padding:.875rem 1rem;font-size:12px;color:#1d4ed8;margin-bottom:1.25rem;
-  display:flex;gap:8px;align-items:flex-start}
-.notice-icon{font-size:16px;flex-shrink:0}
-.notice-src{font-size:11px;color:var(--t3);margin-bottom:1.25rem}
+.info-box{background:var(--blue-l);border:1px solid #bfdbfe;border-radius:var(--r10);
+  padding:.75rem 1rem;font-size:12px;color:var(--blue-d);margin-bottom:1.1rem;
+  display:flex;gap:8px;align-items:flex-start;line-height:1.6}
+.info-icon{flex-shrink:0;font-size:15px}
+.src-note{font-size:10px;color:var(--t3);margin-bottom:1.1rem;line-height:1.7;
+  background:var(--bg);border-radius:var(--r6);padding:.5rem .75rem;border:1px solid var(--border)}
+.src-note a{color:var(--blue);text-decoration:none}
+.src-note a:hover{text-decoration:underline}
 
-/* ─── Section Header ─── */
-.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
-.sec-hd-icon{width:32px;height:32px;border-radius:var(--r6);display:flex;
-  align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.sec-hd-title{font-size:16px;font-weight:700;color:var(--t1)}
-.sec-hd-sub{font-size:12px;color:var(--t3)}
-
-/* ─── 2-col grid ─── */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem}
 @media(max-width:680px){.grid2{grid-template-columns:1fr}}
 
-/* ─── Ranking Table ─── */
-.frow{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.frow label{font-size:13px;color:var(--t2)}
-.frow select,.frow input{font-size:13px;padding:6px 10px;border:1px solid var(--border2);
+/* Ranking */
+.frow{display:flex;align-items:center;gap:8px;margin-bottom:.875rem;flex-wrap:wrap}
+.frow label{font-size:12px;color:var(--t2);font-weight:500}
+.frow select,.frow input{font-size:12px;padding:5px 9px;border:1px solid var(--border2);
   border-radius:var(--r6);background:var(--white);color:var(--t1);font-family:inherit}
-.frow input{width:170px}
+.frow input{width:160px}
 .tbl-wrap{overflow-x:auto;border-radius:var(--r10);border:1px solid var(--border)}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
 .tbl thead{background:var(--bg)}
-.tbl th{font-size:11px;font-weight:600;color:var(--t2);padding:8px 10px;
+.tbl th{font-size:10px;font-weight:700;color:var(--t2);padding:7px 9px;
   border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
-.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--t1);white-space:nowrap}
+.tbl th .u{font-weight:400;color:var(--t3);font-size:9px}
+.tbl td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--t1);white-space:nowrap}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:var(--blue-l)}
 .nc{font-weight:700;cursor:pointer;color:var(--blue)}.nc:hover{text-decoration:underline}
-.bar{height:5px;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:5px;min-width:2px}
-.sbadge{display:inline-block;width:28px;height:28px;border-radius:50%;
-  font-size:11px;font-weight:700;text-align:center;line-height:28px}
+.bar{height:4px;border-radius:2px;display:inline-block;vertical-align:middle;margin-left:4px;min-width:2px}
+.sb{display:inline-block;width:26px;height:26px;border-radius:50%;
+  font-size:10px;font-weight:700;text-align:center;line-height:26px}
 .sbA{background:#dcfce7;color:#166534}.sbB{background:#dbeafe;color:#1e40af}
 .sbC{background:#fef9c3;color:#854d0e}.sbD{background:#fee2e2;color:#991b1b}
 .sbE{background:#fce7f3;color:#9d174d}
-.dr{display:inline-block;width:22px;height:22px;border-radius:4px;
-  font-size:11px;font-weight:700;text-align:center;line-height:22px}
+.dr{display:inline-block;width:20px;height:20px;border-radius:4px;
+  font-size:10px;font-weight:700;text-align:center;line-height:20px}
 .dr1{background:#dcfce7;color:#166534}.dr2{background:#dbeafe;color:#1e40af}
 .dr3{background:#fef9c3;color:#854d0e}.dr4{background:#fee2e2;color:#991b1b}
 .dr5{background:#fce7f3;color:#9d174d}
-.yen{font-size:10px;font-weight:400;margin-left:1px}
 
-/* ─── Rent Cards ─── */
-.rent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:1.25rem}
-.rent-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r16);
-  padding:1rem 1.1rem;box-shadow:var(--shadow-sm)}
-.rent-area{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:.5rem}
-.rent-row{display:flex;justify-content:space-between;align-items:center;
-  padding:4px 0;border-bottom:1px solid var(--border);font-size:12px}
-.rent-row:last-child{border-bottom:none}
-.rent-type{color:var(--t2)}
-.rent-price{font-weight:700;color:var(--blue-d)}
+/* Footer / Pages */
+.footer{background:var(--t1);color:#c8ccd8;font-size:11px;padding:2rem 1.25rem;margin-top:3rem}
+.footer-in{max-width:1080px;margin:0 auto}
+.footer-links{display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+.footer-links a{color:#93c5fd;text-decoration:none}
+.footer-links a:hover{text-decoration:underline}
+.footer-copy{color:#6b7280}
 
-/* ─── Street Light Cards ─── */
-.light-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:1.25rem}
-.light-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r16);
-  padding:1rem;box-shadow:var(--shadow-sm);text-align:center}
-.light-card-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:.5rem}
-.light-meter{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:.5rem 0}
-.light-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#fbbf24,#f59e0b)}
-.light-val{font-size:18px;font-weight:700;color:var(--amber)}
-.light-sub{font-size:11px;color:var(--t3)}
-
-/* ─── Amenity Cards ─── */
-.ami-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:1.25rem}
-.ami-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r16);
-  padding:1rem;box-shadow:var(--shadow-sm)}
-.ami-head{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
-.ami-icon{width:32px;height:32px;border-radius:var(--r6);display:flex;align-items:center;justify-content:center;font-size:16px}
-.ami-title{font-size:13px;font-weight:700;color:var(--t1)}
-.ami-rank{font-size:28px;font-weight:700;margin-bottom:2px}
-.ami-sub{font-size:11px;color:var(--t3)}
+/* Legal Pages */
+.legal{display:none;max-width:760px;margin:2rem auto;padding:0 1.25rem}
+.legal.show{display:block}
+.legal h1{font-size:22px;font-weight:700;color:var(--t1);margin-bottom:1.5rem;
+  padding-bottom:.75rem;border-bottom:2px solid var(--blue-l)}
+.legal h2{font-size:15px;font-weight:700;color:var(--t1);margin:1.75rem 0 .6rem}
+.legal p,.legal li{font-size:13px;color:var(--t2);line-height:1.9;margin-bottom:.6rem}
+.legal ul{margin-left:1.25rem;margin-bottom:.6rem}
+.legal .back{display:inline-block;margin-bottom:1.5rem;font-size:13px;color:var(--blue);
+  cursor:pointer;text-decoration:none}
+.legal .back:hover{text-decoration:underline}
+.legal .warning-box{background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--r10);
+  padding:1rem;margin:1.25rem 0}
+.legal .warning-box p{color:#92400e;font-weight:500}
 
 @media(max-width:600px){
   .hdr-in{flex-direction:column;align-items:flex-start}
-  .hero-title{font-size:18px}
-  .ward-mets{grid-template-columns:repeat(2,1fr)}
-  .ward-name{font-size:20px}
-  .score-num{font-size:32px}
+  .wd-mets{grid-template-columns:repeat(2,1fr)}
+  .wd-name{font-size:18px}
+  .wd-score-num{font-size:30px}
 }
 </style>
 </head>
 <body>
 
-<!-- ─── Header ──────────────────────────────────── -->
+<!-- ─── Header ─────────────────────────────────────── -->
 <header class="hdr">
   <div class="hdr-in">
     <div class="logo">
       <div class="logo-icon">🏙</div>
-      <div class="logo-text">
-        <div class="title">東京都 地域安全ダッシュボード</div>
-        <div class="sub">引越し前に確認｜警視庁・東京都統計局・東京消防庁・国交省データ</div>
+      <div>
+        <div class="logo-title">地域安全ダッシュボード</div>
+        <div class="logo-sub">引越し前に確認｜警視庁・各都道府県警察・総務省統計局</div>
       </div>
     </div>
-    <div class="hdr-r">
-      <div class="updated-pill">✓ <span id="js-updated">読込中…</span></div>
-      <a class="src-btn" href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">📊 出典一覧</a>
+    <div class="hdr-pills">
+      <div class="pill-updated">✓ データ：令和5年（2023年）</div>
+      <a class="pill-link" onclick="showPage('sources')">📋 引用元一覧</a>
+      <a class="pill-link" onclick="showPage('privacy')">🔒 プライバシー</a>
+      <a class="pill-link" onclick="showPage('disclaimer')">⚠️ 免責事項</a>
     </div>
   </div>
 </header>
 
-<!-- ─── Search Hero ──────────────────────────────── -->
-<div class="hero">
+<!-- ─── City Selector ───────────────────────────────── -->
+<div class="city-bar" id="city-bar">
+  <div class="city-bar-in">
+    <span class="city-label">都市を選択：</span>
+    <button class="city-btn on" data-city="tokyo" onclick="switchCity('tokyo')">🗼 東京都</button>
+    <button class="city-btn" data-city="osaka" onclick="switchCity('osaka')">🌸 大阪市</button>
+    <button class="city-btn" data-city="nagoya" onclick="switchCity('nagoya')">🏯 名古屋市</button>
+    <button class="city-btn" data-city="fukuoka" onclick="switchCity('fukuoka')">🌊 福岡市</button>
+    <button class="city-btn" data-city="sapporo" onclick="switchCity('sapporo')">❄️ 札幌市</button>
+  </div>
+</div>
+
+<!-- ─── Hero Search ─────────────────────────────────── -->
+<div class="hero" id="main-hero">
   <div class="hero-in">
     <div class="hero-title">引越し前に地域の安全性を確認しましょう</div>
-    <div class="hero-sub">犯罪・交通事故・火災・街灯・家賃・保育所・公園など10指標を一括チェック</div>
+    <div class="hero-sub">犯罪・交通事故・火災・街灯・家賃・保育所・公園など複数指標を一括チェック</div>
     <div class="search-wrap">
-      <div class="search-row" id="srow">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="si" type="text"
-            placeholder="区名・市名を入力（例：新宿区、世田谷区）" autocomplete="off">
-          <button class="search-clear" id="sc" onclick="clearSearch()">✕</button>
-        </div>
-        <div class="suggest-list" id="sl"></div>
+      <div class="search-box" id="srow">
+        <span class="s-icon">🔍</span>
+        <input class="s-input" id="si" type="text" placeholder="区名を入力（例：新宿区、中央区）" autocomplete="off">
+        <button class="s-clear" id="sc" onclick="clearSearch()">✕</button>
+        <div class="sug" id="sl"></div>
       </div>
     </div>
-    <div class="hero-tags" id="quick-tags">
-      <span class="tag" onclick="selectWard('新宿区')">新宿区</span>
-      <span class="tag" onclick="selectWard('世田谷区')">世田谷区</span>
-      <span class="tag" onclick="selectWard('練馬区')">練馬区</span>
-      <span class="tag" onclick="selectWard('三鷹市')">三鷹市</span>
-      <span class="tag" onclick="selectWard('武蔵野市')">武蔵野市</span>
-      <span class="tag" onclick="selectWard('江戸川区')">江戸川区</span>
-    </div>
+    <div class="quick-tags" id="qtags"></div>
   </div>
 </div>
 
-<!-- ─── Ward Detail ──────────────────────────────── -->
-<div class="ward-wrap" id="wd">
-  <div class="ward-card">
-    <div class="ward-head">
-      <div class="ward-name-area">
-        <div class="ward-name" id="wd-name"></div>
-        <div class="ward-pop" id="wd-pop"></div>
-      </div>
-      <div class="ward-score-area">
-        <div class="score-lbl">総合治安スコア（100点満点）</div>
-        <div class="score-num" id="wd-score"></div>
-        <div><span class="score-grade" id="wd-grade"></span></div>
+<!-- ─── Ward Detail ─────────────────────────────────── -->
+<div class="wd-wrap" id="wd">
+  <div class="wd-card">
+    <div class="wd-head">
+      <div><div class="wd-name" id="wd-name"></div><div class="wd-city" id="wd-city"></div></div>
+      <div class="wd-score-side">
+        <div class="wd-score-lbl">総合治安スコア（100点満点・高い＝安全）</div>
+        <div class="wd-score-num" id="wd-score"></div>
+        <div><span class="wd-grade-badge" id="wd-grade"></span></div>
       </div>
     </div>
-    <div class="ward-body">
-      <div class="ward-section-title">📋 主要指標</div>
-      <div class="ward-mets" id="wd-mets"></div>
-      <div class="ward-section-title">📊 他区との比較（東京都内での相対位置）</div>
+    <div class="wd-body">
+      <div class="wd-sec">📋 主要指標（単位付き）</div>
+      <div class="wd-mets" id="wd-mets"></div>
+      <div class="wd-sec">📊 都市内での相対的な位置</div>
       <div class="wd-bars" id="wd-bars"></div>
-      <div class="ward-section-title">🏠 平均家賃（参考：LIFULL HOME'S・SUUMO調査）</div>
-      <div class="ward-rent-row" id="wd-rent"></div>
-      <div class="ward-close-row">
-        <button class="ward-close" onclick="clearSearch()">✕ 閉じる</button>
-      </div>
+      <div class="wd-sec">🏠 平均家賃の目安</div>
+      <div class="wd-rent-grid" id="wd-rent"></div>
+      <div class="wd-close-row"><button class="wd-close" onclick="clearSearch()">✕ 閉じる</button></div>
     </div>
   </div>
 </div>
 
-<!-- ─── Main ──────────────────────────────────────── -->
-<main class="main">
+<!-- ─── Main App ─────────────────────────────────────── -->
+<main class="main" id="main-app">
   <div id="jl" class="loading">データを読み込んでいます…</div>
   <div id="je" class="errmsg"></div>
 
-  <nav class="tabs">
+  <nav class="tabs" id="tabs-nav">
     <button class="tab on" data-s="overview">🏠 概要</button>
     <button class="tab" data-s="crime">🚨 犯罪</button>
     <button class="tab" data-s="traffic">🚗 交通事故</button>
     <button class="tab" data-s="fire">🔥 火災・危険度</button>
-    <button class="tab" data-s="light">💡 街灯・明るさ</button>
+    <button class="tab" data-s="light">💡 街灯</button>
     <button class="tab" data-s="rent">🏠 家賃</button>
     <button class="tab" data-s="amenity">🌳 生活環境</button>
     <button class="tab" data-s="foreign">🌏 外国人</button>
-    <button class="tab" data-s="children">👦 子供</button>
     <button class="tab" data-s="ranking">📋 ランキング</button>
   </nav>
 
   <!-- 概要 -->
   <section class="sec on" id="s-overview">
-    <div class="notice">
-      <span class="notice-icon">ℹ️</span>
-      <div>最新データ：令和5年（2023年）／ 毎月1日に GitHub Actions で自動更新。犯罪率は人口1,000人あたりで算出。</div>
+    <div class="info-box"><span class="info-icon">ℹ️</span>
+      <div>表示中：<b id="city-label-overview">東京都</b>の区・市別データ（令和5年・2023年）。犯罪発生率は人口1,000人あたりの件数で算出。各単位は数値の右に表示しています。</div>
     </div>
     <div class="mets" id="jm"></div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">主要5指標の年次推移（2019〜2023年、2019年＝100）</div>
-        <span class="card-badge">5年間の変化</span>
-      </div>
-      <div class="card-desc">コロナ禍（2020〜2021年）での急変と、その後の回復・増加傾向が一目でわかります。外国人人口は2023年に過去最多を更新。</div>
-      <div class="cw" style="height:300px"><canvas id="c-ov"></canvas></div>
-      <div class="leg">
-        <span><span class="ld" style="background:#ef4444"></span>刑法犯</span>
-        <span><span class="ld" style="background:#f59e0b"></span>交通事故</span>
-        <span><span class="ld" style="background:#8b5cf6"></span>火災</span>
-        <span><span class="ld" style="background:#3b82f6"></span>外国人</span>
-        <span><span class="ld" style="background:#10b981"></span>14歳以下</span>
-      </div>
+      <div class="card-hd"><div class="card-title">総合治安スコア（全区・市）</div><span class="card-badge">高い＝安全 / 100点満点</span></div>
+      <div class="card-desc">犯罪率・交通事故率・火災率・危険度ランクを統合した独自スコア。A（80点以上）〜E（35点未満）の5段階評価。<span class="unit-note">単位：点</span></div>
+      <div class="cw" style="height:520px"><canvas id="c-score"></canvas></div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">総合治安スコア（全区市 ランキング）</div>
-        <span class="card-badge">高いほど安全</span>
-      </div>
-      <div class="card-desc">犯罪率・交通事故率・火災率・地域危険度を統合した100点満点スコア。A〜Eの5段階でグレード評価。</div>
-      <div class="cw" style="height:500px"><canvas id="c-score"></canvas></div>
-    </div>
-    <p class="notice-src">出典：警視庁「東京の犯罪（令和5年版）」「交通統計（令和5年版）」、東京消防庁「火災の実態（令和5年版）」、東京都統計局、東京都都市整備局「地域危険度一覧表（第9回）」、LIFULL HOME'S・SUUMO家賃相場データ（2024年）</p>
   </section>
 
   <!-- 犯罪 -->
   <section class="sec" id="s-crime">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#fee2e2">🚨</div>
-      <div><div class="sec-hd-title">犯罪件数・犯罪発生率</div>
-      <div class="sec-hd-sub">刑法犯認知件数・人口1,000人あたり犯罪発生率</div></div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">犯罪発生率ランキング（区・市別）</div><span class="card-badge">重要指標</span></div>
+      <div class="card-desc">
+        人口規模に依存しない公平な比較指標です。表示切替：
+        <select id="crime-mode" onchange="renderCrimeBar()">
+          <option value="per1000">犯罪発生率（人口1,000人あたりの件数）</option>
+          <option value="total">認知件数（件）</option>
+        </select>
+      </div>
+      <div class="cw" style="height:540px"><canvas id="c-cr-bar"></canvas></div>
     </div>
     <div class="grid2">
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">長期推移（東京都全体）</div>
-        <div class="cw" style="height:220px"><canvas id="c-cr-tr"></canvas></div>
+        <div class="card-title" style="margin-bottom:.6rem">刑法犯 認知件数の年次推移<span class="unit-note">単位：件</span></div>
+        <div class="card-desc" style="font-size:11px">※東京都全体の推移</div>
+        <div class="cw" style="height:200px"><canvas id="c-cr-tr"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">犯罪種別の構成（2023年）</div>
-        <div class="cw" style="height:220px"><canvas id="c-cr-type"></canvas></div>
+        <div class="card-title" style="margin-bottom:.6rem">犯罪種別の構成（2023年）</div>
+        <div class="cw" style="height:200px"><canvas id="c-cr-type"></canvas></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">区別 犯罪発生率（人口1,000人あたり）</div>
-        <span class="card-badge">重要指標</span>
-      </div>
-      <div class="card-desc">
-        人口規模に関係なく地域の治安水準を比較できます。表示切替：
-        <select id="crime-mode" onchange="renderCrimeBar()">
-          <option value="per1000">人口1,000人あたり（推奨）</option>
-          <option value="rate">人口10万人あたり</option>
-          <option value="total">総件数</option>
-        </select>
-      </div>
-      <div class="cw" style="height:460px"><canvas id="c-cr-bar"></canvas></div>
+    <div class="src-note">
+      <b>出典：</b>
+      東京都：警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」
+      <a href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">→警視庁サイト</a> ／
+      大阪市：大阪府警「令和5年中の犯罪統計（確定値）」 ／
+      名古屋市：愛知県警察「令和5年 犯罪統計資料」 ／
+      福岡市：福岡県警察「令和5年 犯罪統計」 ／
+      札幌市：北海道警察「令和5年 犯罪統計資料」 ／
+      犯罪発生率＝刑法犯認知件数÷人口×1,000
     </div>
-    <p class="notice-src">出典：警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」／ 犯罪発生率＝認知件数÷人口×1,000</p>
   </section>
 
   <!-- 交通事故 -->
   <section class="sec" id="s-traffic">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#fef3c7">🚗</div>
-      <div><div class="sec-hd-title">交通事故件数</div>
-      <div class="sec-hd-sub">2023年は東京都が全国ワースト1位（31,385件）</div></div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">交通事故件数ランキング（区・市別）</div><span class="card-badge">単位：件</span></div>
+      <div class="card-desc">表示切替：<select id="traffic-mode" onchange="renderTrafficBar()">
+        <option value="total">交通事故件数（件）</option>
+        <option value="rate">人口10万人あたりの件数（件/10万人）</option>
+      </select></div>
+      <div class="cw" style="height:540px"><canvas id="c-tr-bar"></canvas></div>
     </div>
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">年次推移（東京都全体）</div>
-        <div class="cw" style="height:220px"><canvas id="c-tr-tr"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">交通事故の多い区（上位15）</div>
-        <div class="card-desc">表示：<select id="traffic-mode" onchange="renderTrafficBar()">
-          <option value="total">総件数</option><option value="rate">10万人あたり</option></select></div>
-        <div class="cw" style="height:180px"><canvas id="c-tr-bar"></canvas></div>
-      </div>
+    <div class="src-note">
+      <b>出典：</b>
+      警視庁「交通統計（令和5年版）」 ／
+      警察庁「交通事故統計情報オープンデータ（2023年）」
+      <a href="https://www.npa.go.jp/publications/statistics/koutsuu/opendata/index_opendata.html" target="_blank">→警察庁サイト</a>
     </div>
-    <p class="notice-src">出典：警視庁「交通統計（令和5年版）」、警察庁「交通事故統計情報オープンデータ（2023年）」</p>
   </section>
 
-  <!-- 火災・危険度 -->
+  <!-- 火災 -->
   <section class="sec" id="s-fire">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#fce7f3">🔥</div>
-      <div><div class="sec-hd-title">火災件数・地域危険度</div>
-      <div class="sec-hd-sub">東京消防庁データ＋都市整備局の震災危険度</div></div>
-    </div>
     <div class="grid2">
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">火災件数 年次推移</div>
-        <div class="cw" style="height:220px"><canvas id="c-fi-tr"></canvas></div>
+        <div class="card-hd"><div class="card-title">火災件数ランキング</div><span class="card-badge">単位：件</span></div>
+        <div class="card-desc">表示：<select id="fire-mode" onchange="renderFireBar()">
+          <option value="total">火災件数（件）</option>
+          <option value="rate">人口10万人あたり（件/10万人）</option>
+        </select></div>
+        <div class="cw" style="height:300px"><canvas id="c-fi-bar"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">火災が多い区（上位15）</div>
-        <div class="card-desc">表示：<select id="fire-mode" onchange="renderFireBar()">
-          <option value="total">総件数</option><option value="rate">10万人あたり</option></select></div>
-        <div class="cw" style="height:180px"><canvas id="c-fi-bar"></canvas></div>
+        <div class="card-hd"><div class="card-title">地域危険度ランク</div><span class="card-badge">1〜5段階（5が最危険）</span></div>
+        <div class="card-desc">東京都都市整備局「第9回地域危険度一覧表」による震災・建物倒壊リスク。下町エリアは木造密集市街地が多くランクが高い。</div>
+        <div class="cw" style="height:300px"><canvas id="c-danger"></canvas></div>
+        <div class="leg">
+          <span><span class="ld" style="background:#10b981"></span>ランク1（低危険）</span>
+          <span><span class="ld" style="background:#3b82f6"></span>ランク2</span>
+          <span><span class="ld" style="background:#f59e0b"></span>ランク3（中）</span>
+          <span><span class="ld" style="background:#ef4444"></span>ランク4〜5（高危険）</span>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">地域危険度ランク（東京都都市整備局・第9回調査）</div>
-        <span class="card-badge">震災・建物倒壊リスク</span>
-      </div>
-      <div class="card-desc">ランク5が最高危険度。下町（台東区・荒川区・墨田区など）は木造密集市街地が多く高リスク。ランク1〜2の地域は相対的に安全。</div>
-      <div class="cw" style="height:460px"><canvas id="c-danger"></canvas></div>
+    <div class="src-note">
+      <b>出典：</b>
+      東京消防庁「火災の実態（令和5年版）」
+      <a href="https://www.tfd.metro.tokyo.lg.jp/learning/elib/kasaijittai/r05.html" target="_blank">→東京消防庁サイト</a> ／
+      大阪市消防局「火災統計」 ／ 名古屋市消防局「消防年報」 ／ 福岡市消防局「消防年報」 ／ 札幌市消防局「消防年報」 ／
+      東京都都市整備局「地域危険度一覧表（第9回）」
+      <a href="https://www.funenka.metro.tokyo.lg.jp/area-hazard-level/regional-risk-list/" target="_blank">→都市整備局サイト</a>
     </div>
-    <p class="notice-src">出典：東京消防庁「火災の実態（令和5年版）」、東京都都市整備局「地域危険度一覧表（第9回）」</p>
   </section>
 
   <!-- 街灯 -->
   <section class="sec" id="s-light">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#fef9c3">💡</div>
-      <div><div class="sec-hd-title">街灯・防犯灯の多さ</div>
-      <div class="sec-hd-sub">夜間の明るさ・安全性を示す重要指標</div></div>
-    </div>
-    <div class="notice">
-      <span class="notice-icon">💡</span>
-      <div>街灯（街路灯・防犯灯）の数は各区市の行政資料集（総務省統計局 社会・人口統計体系）より。<b>面積あたりの密度が高いほど夜道が明るく、犯罪抑止効果が期待できます。</b></div>
+    <div class="info-box"><span class="info-icon">💡</span>
+      <div>街灯（街路灯・防犯灯）の数は各区市の行政資料集より。<b>面積1km²あたりの密度</b>が高いほど夜道が明るく犯罪抑止効果が期待されます。単位：<b>基/km²（1平方キロメートルあたりの街灯数）</b></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">街灯数ランキング（面積1km²あたり）</div>
-        <span class="card-badge">密度が高い＝明るい街</span>
-      </div>
-      <div class="card-desc">面積あたりの密度で比較。都心部は密度が高く、多摩地区は面積が広いため密度が低い傾向があります。</div>
-      <div class="cw" style="height:500px"><canvas id="c-light-bar"></canvas></div>
+      <div class="card-hd"><div class="card-title">街灯密度ランキング（面積1km²あたり）</div><span class="card-badge">単位：基/km²</span></div>
+      <div class="card-desc">密度が高いほど夜間の明るさが期待できます。都心部は密度が高く、多摩・郊外は面積が広いため密度が低くなる傾向があります。</div>
+      <div class="cw" style="height:540px"><canvas id="c-light-bar"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">街灯密度 × 犯罪発生率の関係</div>
-        <span class="card-badge">相関分析</span>
-      </div>
-      <div class="card-desc">街灯が多い地域ほど犯罪が少ない傾向があるか確認できます（バブルサイズ＝人口）。</div>
-      <div class="cw" style="height:360px"><canvas id="c-light-scatter"></canvas></div>
+      <div class="card-hd"><div class="card-title">街灯密度 × 犯罪発生率（相関図）</div><span class="card-badge">X軸：基/km²　Y軸：件/千人</span></div>
+      <div class="card-desc">横軸（X）＝街灯密度（基/km²）、縦軸（Y）＝犯罪発生率（件/千人）。左下が「明るく安全」なエリア。バブルの大きさは人口規模を示します。</div>
+      <div class="cw" style="height:340px"><canvas id="c-light-scatter"></canvas></div>
     </div>
-    <p class="notice-src">出典：総務省統計局「社会・人口統計体系（市区町村データ）」各区行政資料集（令和5年度版）</p>
+    <div class="src-note">
+      <b>出典：</b>
+      総務省統計局「社会・人口統計体系（市区町村データ）」 ／
+      各区市行政資料集（令和5年度版）。街路灯・防犯灯の合計数を面積で除した値。
+    </div>
   </section>
 
   <!-- 家賃 -->
   <section class="sec" id="s-rent">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#dbeafe">🏠</div>
-      <div><div class="sec-hd-title">平均家賃</div>
-      <div class="sec-hd-sub">LIFULL HOME'S・SUUMO調査データ（2024年）</div></div>
-    </div>
-    <div class="notice">
-      <span class="notice-icon">ℹ️</span>
-      <div>家賃データはLIFULL HOME'S・SUUMO・アットホームの公開相場データをもとに集計。実際の物件により異なります。1K：〜25m²、1LDK：〜50m²、ファミリー：2LDK以上。</div>
+    <div class="info-box"><span class="info-icon">ℹ️</span>
+      <div>家賃データはLIFULL HOME'S・SUUMO・アットホームの公開相場データをもとに参考値として集計しています。実際の物件により異なります。<br>
+      1K：25m²以下（単身向け）、1LDK：26〜50m²（カップル向け）、ファミリー：2LDK以上（家族向け）</div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">ワンルーム・1K 平均家賃ランキング</div>
-        <span class="card-badge">単身向け</span>
-      </div>
-      <div class="card-desc">表示：<select id="rent-mode" onchange="renderRentBar()">
-        <option value="rent_1k">1K（単身）</option>
+      <div class="card-hd"><div class="card-title">平均家賃ランキング</div><span class="card-badge">単位：万円/月</span></div>
+      <div class="card-desc">間取り切替：<select id="rent-mode" onchange="renderRentBar()">
+        <option value="rent_1k">1K（単身向け）</option>
         <option value="rent_1ldk">1LDK（カップル向け）</option>
-        <option value="rent_family">ファミリー（2LDK以上）</option>
+        <option value="rent_family">2LDK以上（ファミリー向け）</option>
       </select></div>
-      <div class="cw" style="height:500px"><canvas id="c-rent-bar"></canvas></div>
+      <div class="cw" style="height:540px"><canvas id="c-rent-bar"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">家賃 × 犯罪発生率の関係</div>
-        <span class="card-badge">コスパ比較</span>
-      </div>
-      <div class="card-desc">家賃が安く治安が良い「穴場エリア」を探すための散布図。左下が「安全で安い」理想エリア。</div>
-      <div class="cw" style="height:360px"><canvas id="c-rent-scatter"></canvas></div>
+      <div class="card-hd"><div class="card-title">家賃（1K） × 犯罪発生率（コスパ比較）</div><span class="card-badge">X軸：千円/月　Y軸：件/千人</span></div>
+      <div class="card-desc">横軸（X）＝1K平均家賃（千円/月）、縦軸（Y）＝犯罪発生率（件/千人）。左下が「安くて安全」な穴場エリア。</div>
+      <div class="cw" style="height:340px"><canvas id="c-rent-scatter"></canvas></div>
     </div>
-    <div class="card">
-      <div class="card-title" style="margin-bottom:1rem">ワンルーム家賃の年次推移（東京都平均）</div>
-      <div class="card-desc">2019年〜2023年の推移。コロナ禍でも東京の家賃は上昇基調が続いています。</div>
-      <div class="cw" style="height:220px"><canvas id="c-rent-tr"></canvas></div>
+    <div class="src-note">
+      <b>出典（参考値）：</b>
+      LIFULL HOME'S「東京23区の家賃相場情報」 ／
+      SUUMO「家賃相場データ（2024年）」 ／
+      アットホーム「家賃動向 全国主要都市の賃貸マンション・アパート」 ／
+      国土交通省「住宅・土地統計調査（令和5年）」
+      <a href="https://www.mlit.go.jp/toukei/list/jutaku-1.html" target="_blank">→国土交通省サイト</a>
+      ／ ※家賃は参考相場であり、実際の物件価格を保証するものではありません。
     </div>
-    <p class="notice-src">出典：LIFULL HOME'S「東京23区の家賃相場情報」、SUUMO家賃相場、国土交通省「住宅・土地統計調査」（参考値）</p>
   </section>
 
   <!-- 生活環境 -->
   <section class="sec" id="s-amenity">
-    <div class="sec-hd">
-      <div class="sec-hd-icon" style="background:#dcfce7">🌳</div>
-      <div><div class="sec-hd-title">生活環境・利便性</div>
-      <div class="sec-hd-sub">引越し時に気になる保育所・病院・公園データ</div></div>
-    </div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">保育所・病院・公園 充実度ランキング</div>
-        <span class="card-badge">生活利便性</span>
-      </div>
-      <div class="card-desc">表示：<select id="amenity-mode" onchange="renderAmenityBar()">
-        <option value="nursery">保育所・認定こども園 数</option>
-        <option value="hospital">病院・診療所 数</option>
-        <option value="park">公園数</option>
-        <option value="park_area_pct">緑被率（%）</option>
+      <div class="card-hd"><div class="card-title">生活利便性ランキング</div><span class="card-badge">保育所・病院・公園</span></div>
+      <div class="card-desc">指標切替：<select id="amenity-mode" onchange="renderAmenityBar()">
+        <option value="nursery">保育所・認定こども園数（ヶ所）</option>
+        <option value="hospital">病院・診療所数（ヶ所）</option>
+        <option value="park_area_pct">緑被率・公園面積率（%）</option>
       </select></div>
-      <div class="cw" style="height:500px"><canvas id="c-ami-bar"></canvas></div>
+      <div class="cw" style="height:540px"><canvas id="c-ami-bar"></canvas></div>
     </div>
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">🏥 病院・診療所が多い区（上位10）</div>
-        <div class="cw" style="height:260px"><canvas id="c-hospital"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">🌳 公園の緑被率が高い区（上位10）</div>
-        <div class="cw" style="height:260px"><canvas id="c-park"></canvas></div>
-      </div>
+    <div class="src-note">
+      <b>出典：</b>
+      東京都福祉保健局「保育所等一覧（令和5年4月）」 ／
+      東京都「医療機関情報サービス（令和5年）」 ／
+      東京都公園協会「公園データ（令和5年度）」 ／
+      各政令指定都市の同種統計資料
     </div>
-    <p class="notice-src">出典：東京都福祉保健局「保育所等一覧」、東京都「医療機関情報サービス」、東京都公園協会（令和5年度版）</p>
   </section>
 
   <!-- 外国人 -->
   <section class="sec" id="s-foreign">
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">外国人人口 年次推移</div>
-        <div class="cw" style="height:220px"><canvas id="c-fo-tr"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">国籍・地域別構成（2023年）</div>
-        <div class="cw" style="height:220px"><canvas id="c-fo-pie"></canvas></div>
-      </div>
-    </div>
     <div class="card">
-      <div class="card-title" style="margin-bottom:.75rem">外国人割合が高い区（2024年・上位15）</div>
-      <div class="cw" style="height:420px"><canvas id="c-fo-bar"></canvas></div>
+      <div class="card-hd"><div class="card-title">外国人住民の割合ランキング</div><span class="card-badge">単位：%（総人口に占める割合）</span></div>
+      <div class="card-desc">外国人割合（%）＝外国人住民数÷総人口×100。多文化共生の進み具合の目安として参照できます。</div>
+      <div class="cw" style="height:540px"><canvas id="c-fo-bar"></canvas></div>
     </div>
-    <p class="notice-src">出典：東京都統計局「外国人人口（令和5年）」、出入国在留管理庁「在留外国人統計」</p>
-  </section>
-
-  <!-- 子供 -->
-  <section class="sec" id="s-children">
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">14歳以下人口 年次推移</div>
-        <div class="cw" style="height:220px"><canvas id="c-ch-tr"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">子供が多い区（上位15）</div>
-        <div class="cw" style="height:220px"><canvas id="c-ch-bar"></canvas></div>
-      </div>
+    <div class="src-note">
+      <b>出典：</b>
+      東京都統計局「外国人人口（令和5年）」
+      <a href="https://www.toukei.metro.tokyo.lg.jp/gaikoku/ga-index.htm" target="_blank">→東京都統計局サイト</a> ／
+      各市区の住民基本台帳（令和5年） ／
+      出入国在留管理庁「在留外国人統計（令和5年）」
+      <a href="https://www.moj.go.jp/isa/policies/statistics/toukei_ichiran_touroku.html" target="_blank">→法務省サイト</a>
     </div>
-    <p class="notice-src">出典：東京都統計局「住民基本台帳による東京都の世帯と人口」</p>
   </section>
 
   <!-- ランキング -->
@@ -623,56 +522,213 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
       <div class="frow">
         <label>並び替え：</label>
         <select id="rank-key" onchange="renderRanking()">
-          <option value="safety_score">総合治安スコア（高い＝安全）</option>
-          <option value="crime_per1000">犯罪発生率 /1000人（低い順）</option>
-          <option value="rent_1k">家賃 1K（安い順）</option>
-          <option value="streetlight_per_km2">街灯密度（高い順）</option>
-          <option value="crime">犯罪件数（多い順）</option>
-          <option value="traffic">交通事故（多い順）</option>
-          <option value="fire">火災件数（多い順）</option>
-          <option value="danger_rank">危険度ランク（高い順）</option>
-          <option value="foreign_pct">外国人割合（多い順）</option>
-          <option value="nursery">保育所数（多い順）</option>
-          <option value="park_area_pct">緑被率（高い順）</option>
+          <option value="safety_score">総合治安スコア（点・高い＝安全）</option>
+          <option value="crime_per1000">犯罪発生率（件/千人・少ない順）</option>
+          <option value="rent_1k">家賃1K（円/月・安い順）</option>
+          <option value="streetlight_per_km2">街灯密度（基/km²・多い順）</option>
+          <option value="crime">犯罪認知件数（件・多い順）</option>
+          <option value="traffic">交通事故件数（件・多い順）</option>
+          <option value="fire">火災件数（件・多い順）</option>
+          <option value="danger_rank">危険度ランク（1-5・高い順）</option>
+          <option value="foreign_pct">外国人割合（%・多い順）</option>
+          <option value="nursery">保育所数（ヶ所・多い順）</option>
+          <option value="park_area_pct">緑被率（%・高い順）</option>
         </select>
         <input type="text" id="rank-filter" placeholder="区名で絞り込み…" oninput="renderRanking()">
       </div>
       <div class="tbl-wrap">
         <table class="tbl">
           <thead><tr>
-            <th>#</th><th>区・市</th><th>安全スコア</th>
-            <th>犯罪率/1000</th><th>交通事故</th><th>火災</th>
-            <th>危険度</th><th>街灯密度</th>
-            <th>家賃1K</th><th>保育所</th><th>緑被率</th>
+            <th>#</th>
+            <th>区・市</th>
+            <th>スコア<span class="u">（点）</span></th>
+            <th>犯罪率<span class="u">（件/千人）</span></th>
+            <th>交通事故<span class="u">（件）</span></th>
+            <th>火災<span class="u">（件）</span></th>
+            <th>危険度<span class="u">（1-5）</span></th>
+            <th>街灯密度<span class="u">（基/km²）</span></th>
+            <th>家賃1K<span class="u">（万円/月）</span></th>
+            <th>保育所<span class="u">（ヶ所）</span></th>
+            <th>緑被率<span class="u">（%）</span></th>
           </tr></thead>
           <tbody id="rank-body"></tbody>
         </table>
       </div>
     </div>
-    <p class="notice-src">出典：警視庁・東京消防庁・東京都統計局・東京都都市整備局・各区行政資料集・LIFULL HOME'S（2023〜2024年）</p>
+    <div class="src-note"><b>出典：</b>各都道府県警察・消防局・統計局・福祉保健局（2023〜2024年）</div>
   </section>
 </main>
 
-<script>
-const DATA_URL='./data/tokyo_safety.json';
-let G=null;
-let cCrBar=null,cTrBar=null,cFiBar=null,cAmiBar=null,cRentBar=null;
+<!-- ─── Legal Pages ──────────────────────────────────── -->
+<div class="legal" id="page-sources">
+  <a class="back" onclick="showPage(null)">← ダッシュボードに戻る</a>
+  <h1>📋 データ引用元一覧</h1>
+  <h2>犯罪データ</h2>
+  <ul>
+    <li>警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」<br><a href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">https://www.keishicho.metro.tokyo.lg.jp/</a></li>
+    <li>大阪府警本部「令和5年中の犯罪統計（確定値）」<br><a href="https://www.police.pref.osaka.lg.jp/tokei.html" target="_blank">https://www.police.pref.osaka.lg.jp/</a></li>
+    <li>愛知県警察「令和5年中 犯罪統計資料」<br><a href="https://www.pref.aichi.jp/police/anzen/crimemap/" target="_blank">https://www.pref.aichi.jp/police/</a></li>
+    <li>福岡県警察「令和5年中の犯罪統計（確定値）」<br><a href="https://www.police.pref.fukuoka.jp/toukei/" target="_blank">https://www.police.pref.fukuoka.jp/</a></li>
+    <li>北海道警察「令和5年中の犯罪統計」<br><a href="https://www.police.pref.hokkaido.lg.jp/info/soumu/hanzai-toukei/" target="_blank">https://www.police.pref.hokkaido.lg.jp/</a></li>
+    <li>警察庁 犯罪統計資料（e-Stat）<br><a href="https://www.e-stat.go.jp/stat-search/files?toukei=00130001" target="_blank">https://www.e-stat.go.jp/</a></li>
+  </ul>
+  <h2>交通事故データ</h2>
+  <ul>
+    <li>警視庁「交通統計（令和5年版）」</li>
+    <li>警察庁「交通事故統計情報オープンデータ（2023年）」<br><a href="https://www.npa.go.jp/publications/statistics/koutsuu/opendata/index_opendata.html" target="_blank">https://www.npa.go.jp/</a></li>
+  </ul>
+  <h2>火災・防災データ</h2>
+  <ul>
+    <li>東京消防庁「火災の実態（令和5年版）」<br><a href="https://www.tfd.metro.tokyo.lg.jp/learning/elib/kasaijittai/r05.html" target="_blank">https://www.tfd.metro.tokyo.lg.jp/</a></li>
+    <li>各市消防局「消防年報（令和5年版）」</li>
+    <li>東京都都市整備局「地域危険度一覧表（第9回）」<br><a href="https://www.funenka.metro.tokyo.lg.jp/area-hazard-level/regional-risk-list/" target="_blank">https://www.funenka.metro.tokyo.lg.jp/</a></li>
+    <li>総務省消防庁「消防統計（令和5年）」<br><a href="https://www.fdma.go.jp/pressrelease/statistics/" target="_blank">https://www.fdma.go.jp/</a></li>
+  </ul>
+  <h2>人口・外国人データ</h2>
+  <ul>
+    <li>東京都統計局「外国人人口（令和5年）」「住民基本台帳による東京都の世帯と人口」<br><a href="https://www.toukei.metro.tokyo.lg.jp/gaikoku/ga-index.htm" target="_blank">https://www.toukei.metro.tokyo.lg.jp/</a></li>
+    <li>出入国在留管理庁「在留外国人統計（令和5年）」<br><a href="https://www.moj.go.jp/isa/policies/statistics/" target="_blank">https://www.moj.go.jp/isa/</a></li>
+    <li>総務省統計局「住民基本台帳に基づく人口・人口動態及び世帯数（令和5年）」<br><a href="https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jichi.html" target="_blank">https://www.soumu.go.jp/</a></li>
+    <li>各都市市区の住民基本台帳（令和5年）</li>
+  </ul>
+  <h2>街灯・防犯灯データ</h2>
+  <ul>
+    <li>総務省統計局「社会・人口統計体系（市区町村データ）」<br><a href="https://www.stat.go.jp/data/ssds/index.html" target="_blank">https://www.stat.go.jp/</a></li>
+    <li>各区市行政資料集（令和5年度版）</li>
+  </ul>
+  <h2>家賃データ（参考値）</h2>
+  <ul>
+    <li>LIFULL HOME'S「東京23区の家賃相場情報（2024年）」<br><a href="https://www.homes.co.jp/" target="_blank">https://www.homes.co.jp/</a></li>
+    <li>SUUMO「家賃相場データ（2024年）」<br><a href="https://suumo.jp/chintai/soba/tokyo/" target="_blank">https://suumo.jp/</a></li>
+    <li>アットホーム「家賃動向 全国主要都市の賃貸マンション・アパート」</li>
+    <li>国土交通省「住宅・土地統計調査（令和5年）」<br><a href="https://www.mlit.go.jp/toukei/list/jutaku-1.html" target="_blank">https://www.mlit.go.jp/</a></li>
+  </ul>
+  <h2>生活環境データ</h2>
+  <ul>
+    <li>東京都福祉保健局「保育所等一覧（令和5年4月）」</li>
+    <li>東京都「医療機関情報サービス（令和5年）」<br><a href="https://www.himawari.metro.tokyo.jp/" target="_blank">https://www.himawari.metro.tokyo.jp/</a></li>
+    <li>東京都公園協会「公園データ（令和5年度）」</li>
+    <li>各政令指定都市の同種統計資料</li>
+  </ul>
+  <p style="margin-top:1.5rem;font-style:italic;color:var(--t3)">※ 本サイトは上記の公開データを参考として整理・掲載しています。最新の確定値は各出典元を直接ご確認ください。</p>
+</div>
 
-// Chart.js 共通設定
-const TC='#64748b', GC='rgba(0,0,0,.06)';
+<div class="legal" id="page-privacy">
+  <a class="back" onclick="showPage(null)">← ダッシュボードに戻る</a>
+  <h1>🔒 プライバシーポリシー</h1>
+  <p>本ページ（以下「当サイト」）は、引越し先候補の地域の安全性・生活利便性に関する統計情報を提供する目的で運営しています。当サイトにおける個人情報の取り扱いについて、以下のとおり定めます。</p>
+  <h2>1. 収集する情報</h2>
+  <p>当サイトは、利用者から個人情報（氏名・住所・メールアドレス等）を直接収集・記録することはありません。当サイトはGitHub Pagesで静的ファイルとして提供されており、サーバーへのアクセスログはGitHub社のポリシーに従い管理されます。</p>
+  <h2>2. アクセス解析</h2>
+  <p>当サイトは現時点でGoogle Analytics等のアクセス解析ツールを使用しておりません。将来的に導入する場合は本ポリシーを更新します。</p>
+  <h2>3. Cookie（クッキー）</h2>
+  <p>当サイトはCookieを使用していません。</p>
+  <h2>4. 外部リンク</h2>
+  <p>当サイトには警視庁・各都道府県警察・統計局等の外部サイトへのリンクが含まれます。外部サイトのプライバシーポリシーは各サイトのポリシーに従います。</p>
+  <h2>5. データの取り扱い</h2>
+  <p>当サイトで表示する統計データは、政府機関等が公開しているオープンデータをもとに整理・編集したものです。個人を特定できる情報は一切含みません。</p>
+  <h2>6. ポリシーの変更</h2>
+  <p>本プライバシーポリシーは、必要に応じて予告なく変更する場合があります。変更後はこのページに掲載します。</p>
+  <h2>7. お問い合わせ</h2>
+  <p>本ポリシーに関するお問い合わせは、GitHubリポジトリのIssue機能をご利用ください。</p>
+  <p style="margin-top:1.5rem;color:var(--t3);font-size:12px">最終更新：2025年1月</p>
+</div>
+
+<div class="legal" id="page-disclaimer">
+  <a class="back" onclick="showPage(null)">← ダッシュボードに戻る</a>
+  <h1>⚠️ 免責事項</h1>
+  <div class="warning-box">
+    <p>⚠️ 当サイトのデータは参考情報であり、特定の地域の安全性・居住適性を保証するものではありません。引越し先の選定にあたっては、必ず現地確認・専門家への相談等を行ってください。</p>
+  </div>
+  <h2>1. 情報の正確性について</h2>
+  <p>当サイトに掲載する統計データは、政府機関・公的機関が公開する資料を参考として整理・編集したものです。データの正確性・完全性・最新性については万全を期しておりますが、これを保証するものではありません。</p>
+  <p>統計データには集計時点・集計方法の違いにより実態と差異が生じる場合があります。特に家賃データは参考相場値であり、実際の物件価格とは異なります。</p>
+  <h2>2. 利用目的の限定</h2>
+  <p>当サイトは引越し前の参考情報提供を目的としており、投資判断・法的判断・営業活動等に使用することを想定していません。</p>
+  <h2>3. 損害の免責</h2>
+  <p>当サイトの情報を利用したことにより生じたいかなる損害（直接損害・間接損害・逸失利益等を含む）についても、当サイト運営者は一切の責任を負いません。</p>
+  <p>当サイトの情報に基づいて行った行動の結果については、利用者自身の責任においてご判断ください。</p>
+  <h2>4. データの更新について</h2>
+  <p>本サイトは定期的にデータ更新を行いますが、最新の公式データとの間に差異が生じる場合があります。最新の確定値は各省庁・都道府県警察等の公式サイトをご確認ください。</p>
+  <h2>5. 外部サービスの利用</h2>
+  <p>当サイトはGitHub Pagesで提供されており、GitHubの利用規約が適用されます。当サイト運営者はGitHubのサービス変更・停止による情報の消失等について責任を負いません。</p>
+  <h2>6. 地域・人物に関する表現について</h2>
+  <p>当サイトに掲載するデータは統計的事実に基づくものであり、特定の地域・居住者・民族等を差別・排除することを意図するものではありません。すべての地域には多様な側面があり、統計データはあくまで参考の一つとしてご利用ください。</p>
+  <h2>7. 適用法令</h2>
+  <p>本免責事項は日本国法令に基づき解釈・適用されます。</p>
+  <p style="margin-top:1.5rem;color:var(--t3);font-size:12px">最終更新：2025年1月</p>
+</div>
+
+<!-- ─── Footer ───────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-links">
+      <a onclick="showPage('sources')">📋 引用元一覧</a>
+      <a onclick="showPage('privacy')">🔒 プライバシーポリシー</a>
+      <a onclick="showPage('disclaimer')">⚠️ 免責事項</a>
+    </div>
+    <div class="footer-copy">
+      © 地域安全ダッシュボード ｜ データ出典：警視庁・各都道府県警察・総務省・国土交通省・東京都統計局 等
+      ｜ 本サイトのデータは参考情報です。最新の確定値は各出典をご確認ください。
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── ページ切替（免責等） ─────────────────────────
+const LEGAL_PAGES = ['sources','privacy','disclaimer'];
+function showPage(name) {
+  const app = document.getElementById('main-app');
+  const hero = document.getElementById('main-hero');
+  const cityBar = document.getElementById('city-bar');
+  const wd = document.getElementById('wd');
+  LEGAL_PAGES.forEach(p => document.getElementById('page-'+p).classList.remove('show'));
+  if (name) {
+    app.style.display = 'none'; hero.style.display = 'none';
+    cityBar.style.display = 'none'; wd.style.display = 'none';
+    document.getElementById('page-'+name).classList.add('show');
+    window.scrollTo(0,0);
+  } else {
+    app.style.display = ''; hero.style.display = ''; cityBar.style.display = '';
+  }
+}
+
+// ─── データ・状態 ─────────────────────────────────
+const DATA_URL = './data/tokyo_safety.json';
+let G = null;        // 全データ
+let CW = null;       // 現在の都市データ（wards配列）
+let CITY = 'tokyo';  // 現在選択中の都市キー
+let cCrBar=null, cTrBar=null, cFiBar=null, cAmiBar=null, cRentBar=null;
+
+// ─── Chart共通 ─────────────────────────────────
+const TC='#64748b', GC='rgba(0,0,0,.05)';
 Chart.defaults.font.family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif";
-Chart.defaults.font.size=12; Chart.defaults.color=TC;
-const bo={responsive:true,maintainAspectRatio:false,
+Chart.defaults.font.size=11; Chart.defaults.color=TC;
+const BO={responsive:true,maintainAspectRatio:false,
   plugins:{legend:{display:false}},
   scales:{x:{grid:{color:GC},ticks:{color:TC}},y:{grid:{color:GC},ticks:{color:TC}}}};
 
-function safetyScore(w){
-  return Math.max(0,Math.min(100,Math.round(100-(w.crime_rate/35)-(w.traffic_rate/8)-(w.fire_rate/2.8)-(w.danger_rank*3.5))));
+function destroyCharts(){
+  [cCrBar,cTrBar,cFiBar,cAmiBar,cRentBar].forEach(c=>{if(c)c.destroy();});
+  cCrBar=cTrBar=cFiBar=cAmiBar=cRentBar=null;
+  ['c-score','c-cr-bar','c-cr-tr','c-cr-type','c-tr-bar','c-fi-bar','c-danger',
+   'c-light-bar','c-light-scatter','c-rent-bar','c-rent-scatter','c-ami-bar','c-fo-bar']
+  .forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el._chart){el._chart.destroy();delete el._chart;}
+    // Chart.jsのインスタンス管理
+    const inst = Chart.getChart(id);
+    if(inst) inst.destroy();
+  });
+}
+
+function safeScore(w){
+  return Math.max(0,Math.min(100,Math.round(100-(w.crime_per1000*1.2)-(w.traffic/w.population*5000)-(w.fire/w.population*3000)-(w.danger_rank*4))));
 }
 function grade(s){return s>=80?'A':s>=65?'B':s>=50?'C':s>=35?'D':'E';}
 function gradeLabel(g){return{A:'非常に安全',B:'安全',C:'普通',D:'やや注意',E:'要注意'}[g];}
 
-// 初期化
+// ─── 初期化 ─────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
@@ -681,43 +737,61 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('s-'+b.dataset.s).classList.add('on');
   }));
   setupSearch();
-  fetchData();
+  loadData();
 });
 
-async function fetchData(){
+async function loadData(){
   try{
     const r=await fetch(DATA_URL+'?v='+Date.now());
-    if(!r.ok)throw new Error('HTTP '+r.status);
+    if(!r.ok) throw new Error('HTTP '+r.status);
     G=await r.json();
-    G.wards.forEach(w=>{w.safety_score=safetyScore(w);});
     document.getElementById('jl').style.display='none';
     const d=new Date(G.updated_at);
-    document.getElementById('js-updated').textContent=isNaN(d)?G.updated_at:d.toLocaleDateString('ja-JP')+' 更新済';
-    renderAll();
-  }catch(e){
+    const dateStr=isNaN(d)?G.updated_at:d.toLocaleDateString('ja-JP')+' 更新済';
+    document.querySelectorAll('.pill-updated').forEach(el=>el.textContent='✓ '+dateStr);
+    switchCity('tokyo');
+  } catch(e){
     document.getElementById('jl').style.display='none';
     const el=document.getElementById('je');
-    el.style.display='block';el.textContent='データ読み込み失敗: '+e.message;
+    el.style.display='block'; el.textContent='データ読み込み失敗: '+e.message;
   }
 }
 
-// ─── 検索 ───────────────────────────────────────────
+function switchCity(cityKey){
+  CITY=cityKey;
+  document.querySelectorAll('.city-btn').forEach(b=>b.classList.toggle('on',b.dataset.city===cityKey));
+  CW=G.cities[cityKey].wards.map(w=>({...w, safety_score: safeScore(w)}));
+  const lbl=G.cities[cityKey].label;
+  document.getElementById('city-label-overview').textContent=lbl;
+  clearSearch();
+  updateQuickTags();
+  destroyCharts();
+  renderAll();
+}
+
+// ─── 検索 ───────────────────────────────────────
+function updateQuickTags(){
+  const top5=[...CW].sort((a,b)=>b.safety_score-a.safety_score).slice(0,5);
+  document.getElementById('qtags').innerHTML=top5.map(w=>
+    `<span class="qtag" onclick="selectWard('${w.name}')">${w.name}</span>`).join('');
+}
+
 function setupSearch(){
   const inp=document.getElementById('si'),list=document.getElementById('sl');
   let fi=-1;
   inp.addEventListener('input',()=>{
     const q=inp.value.trim();
     document.getElementById('sc').style.display=q?'block':'none';
-    if(!q||!G){list.classList.remove('show');return;}
-    const m=G.wards.filter(w=>w.name.includes(q));
+    if(!q||!CW){list.classList.remove('show');return;}
+    const m=CW.filter(w=>w.name.includes(q));
     if(!m.length){list.classList.remove('show');return;}
     fi=-1;
     list.innerHTML=m.map(w=>{
-      const g=grade(safetyScore(w));
+      const g=grade(w.safety_score);
       const hi=w.name.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'),`<span class="hi">${q}</span>`);
       return `<div class="sug-item" onclick="selectWard('${w.name}')">
-        <span class="sug-grade sg-${g}">${g}</span>${hi}
-        <span style="margin-left:auto;font-size:11px;color:#94a3b8">スコア ${w.safety_score}</span>
+        <span class="sug-grade g${g}">${g}</span>${hi}
+        <span style="margin-left:auto;font-size:10px;color:#94a3b8">${w.safety_score}点</span>
       </div>`;
     }).join('');
     list.classList.add('show');
@@ -732,9 +806,8 @@ function setupSearch(){
   document.addEventListener('click',e=>{if(!e.target.closest('#srow'))list.classList.remove('show');});
 }
 function updF(items){items.forEach((el,i)=>el.classList.toggle('focus',i===fi));if(fi>=0)items[fi].scrollIntoView({block:'nearest'});}
-
 function selectWard(name){
-  if(!G)return;
+  if(!CW)return;
   document.getElementById('si').value=name;
   document.getElementById('sc').style.display='block';
   document.getElementById('sl').classList.remove('show');
@@ -748,57 +821,57 @@ function clearSearch(){
 }
 
 function showWardDetail(name){
-  const w=G.wards.find(x=>x.name===name);if(!w)return;
-  const s=w.safety_score,g=grade(s);
+  const w=CW.find(x=>x.name===name); if(!w)return;
+  const s=w.safety_score, g=grade(s);
   document.getElementById('wd-name').textContent=w.name;
-  document.getElementById('wd-pop').textContent=`総人口 ${w.population.toLocaleString()}人`;
+  document.getElementById('wd-city').textContent=G.cities[CITY].label;
   document.getElementById('wd-score').textContent=s;
   const gel=document.getElementById('wd-grade');
   gel.textContent=`${g}ランク — ${gradeLabel(g)}`;
-  gel.className='score-grade g'+g;
+  gel.className='wd-grade-badge g'+g;
 
   document.getElementById('wd-mets').innerHTML=[
-    ['🚨','刑法犯認知件数',w.crime.toLocaleString()+'件',`1,000人あたり ${w.crime_per1000}件`,'#fee2e2'],
-    ['🚗','交通事故件数',w.traffic.toLocaleString()+'件',`10万人あたり ${w.traffic_rate}件`,'#fef3c7'],
-    ['🔥','火災件数',w.fire.toLocaleString()+'件',`10万人あたり ${w.fire_rate}件`,'#fce7f3'],
-    ['⚠️','地域危険度','ランク '+w.danger_rank,['','低危険','やや低','中程度','やや高','高危険'][w.danger_rank],'#fef9c3'],
-    ['💡','街灯密度',w.streetlight_per_km2.toLocaleString()+' 基/km²',`総数 ${w.streetlight.toLocaleString()}基`,'#fef9c3'],
-    ['🌏','外国人割合',w.foreign_pct+'%',`${w.foreign.toLocaleString()}人`,'#eff6ff'],
-    ['👦','14歳以下',w.child_pct+'%',`${w.child.toLocaleString()}人`,'#ecfdf5'],
-    ['🌳','公園 緑被率',w.park_area_pct+'%',`公園数 ${w.park}ヶ所`,'#ecfdf5'],
-  ].map(([icon,lbl,val,sub,bg])=>`
-    <div class="wm" style="background:${bg}">
-      <div class="wm-icon">${icon}</div>
-      <div class="wm-lbl">${lbl}</div>
-      <div class="wm-val">${val}</div>
-      <div class="wm-sub">${sub}</div>
+    ['🚨','刑法犯認知件数','件',w.crime.toLocaleString(),`犯罪発生率 ${w.crime_per1000} 件/千人`,'#fef2f2'],
+    ['🚗','交通事故件数','件',w.traffic.toLocaleString(),`人口10万人あたり ${Math.round(w.traffic/w.population*100000)} 件/10万人`,'#fffbeb'],
+    ['🔥','火災件数','件',w.fire.toLocaleString(),`人口10万人あたり ${Math.round(w.fire/w.population*100000)} 件/10万人`,'#fdf4ff'],
+    ['⚠️','地域危険度','ランク',w.danger_rank,['','低危険','やや低','中程度','やや高','高危険'][w.danger_rank]||'','#fef9c3'],
+    ['💡','街灯密度','基/km²',w.streetlight_per_km2.toLocaleString(),'面積1km²あたりの街灯数','#fffbeb'],
+    ['🌏','外国人割合','%',w.foreign_pct,`総人口に占める外国人の割合`,'#eff6ff'],
+    ['👦','子供の割合','%',w.child_pct,'14歳以下が総人口に占める割合','#ecfdf5'],
+    ['🌳','緑被率','%',w.park_area_pct,'公園・緑地の面積が区域に占める割合','#ecfdf5'],
+  ].map(([icon,lbl,unit,val,sub,bg])=>`
+    <div class="wd-met" style="background:${bg}">
+      <div class="wd-met-icon">${icon}</div>
+      <div class="wd-met-lbl">${lbl}</div>
+      <div class="wd-met-val">${val}<span class="wd-met-unit">${unit}</span></div>
+      <div class="wd-met-sub">${sub}</div>
     </div>`).join('');
 
-  const mC=Math.max(...G.wards.map(x=>x.crime_rate));
-  const mT=Math.max(...G.wards.map(x=>x.traffic_rate));
-  const mF=Math.max(...G.wards.map(x=>x.fire_rate));
-  const mL=Math.max(...G.wards.map(x=>x.streetlight_per_km2));
+  const mC=Math.max(...CW.map(x=>x.crime_per1000));
+  const mT=Math.max(...CW.map(x=>x.traffic));
+  const mF=Math.max(...CW.map(x=>x.fire));
+  const mL=Math.max(...CW.map(x=>x.streetlight_per_km2));
   document.getElementById('wd-bars').innerHTML=[
-    ['犯罪率（10万人あたり）',w.crime_rate,mC,'#ef4444'],
-    ['交通事故率（10万人あたり）',w.traffic_rate,mT,'#f59e0b'],
-    ['火災率（10万人あたり）',w.fire_rate,mF,'#8b5cf6'],
+    ['犯罪発生率（件/千人）',w.crime_per1000,mC,'#ef4444'],
+    ['交通事故件数（件）',w.traffic,mT,'#f59e0b'],
+    ['火災件数（件）',w.fire,mF,'#8b5cf6'],
+    ['街灯密度（基/km²）',w.streetlight_per_km2,mL,'#f59e0b'],
     ['危険度ランク（×20）',w.danger_rank*20,100,'#94a3b8'],
-    ['街灯密度（km²あたり）',w.streetlight_per_km2,mL,'#f59e0b'],
   ].map(([lbl,val,mx,col])=>`
     <div class="br-row">
       <div class="br-lbl">${lbl}</div>
       <div class="br-track"><div class="br-fill" style="width:${Math.round(val/mx*100)}%;background:${col}"></div></div>
-      <div class="br-val">${val.toLocaleString()}</div>
+      <div class="br-val">${typeof val==='number'?val.toLocaleString():val}</div>
     </div>`).join('');
 
   document.getElementById('wd-rent').innerHTML=[
-    ['1K（単身向け）',w.rent_1k],
-    ['1LDK（カップル向け）',w.rent_1ldk],
-    ['2LDK以上（ファミリー）',w.rent_family],
-  ].map(([lbl,v])=>`
-    <div class="rent-box">
-      <div class="rent-box-lbl">${lbl}</div>
-      <div class="rent-box-val">${Math.round(v/10000)}万<span style="font-size:12px;font-weight:400">円/月</span></div>
+    ['1K（単身向け・〜25m²）',w.rent_1k,'円/月'],
+    ['1LDK（カップル・〜50m²）',w.rent_1ldk,'円/月'],
+    ['2LDK以上（ファミリー）',w.rent_family,'円/月'],
+  ].map(([lbl,v,unit])=>`
+    <div class="wd-rent-box">
+      <div class="wd-rent-lbl">${lbl}</div>
+      <div class="wd-rent-val">${Math.round(v/10000)}万<span class="wd-rent-unit">${unit}</span></div>
     </div>`).join('');
 
   const el=document.getElementById('wd');
@@ -806,173 +879,181 @@ function showWardDetail(name){
   setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
-// ─── Chart ヘルパー ──────────────────────────────────
-function mkLine(id,lbs,ds,opts={}){
-  new Chart(document.getElementById(id),{type:'line',data:{labels:lbs,datasets:ds},
-    options:{...JSON.parse(JSON.stringify(bo)),...opts}});
-}
-function mkBar(id,lbs,data,col,horiz,opts={}){
-  return new Chart(document.getElementById(id),{type:'bar',
-    data:{labels:lbs,datasets:[{data,backgroundColor:col,borderRadius:4,borderSkipped:false}]},
-    options:{...JSON.parse(JSON.stringify(bo)),indexAxis:horiz?'y':'x',
-      scales:{x:{grid:{color:GC},ticks:{color:TC,autoSkip:false,...(horiz?{}:{maxRotation:40})}},
-              y:{grid:{color:GC},ticks:{color:TC,autoSkip:false,font:{size:11}}}},
-      ...opts}});
-}
-
-// ─── 全描画 ──────────────────────────────────────────
+// ─── 全描画 ─────────────────────────────────────
 function renderAll(){
   renderOverview();
-  renderCrimeTrend();renderCrimeBar();renderCrimeType();
-  renderTrafficTrend();renderTrafficBar();
-  renderFireTrend();renderFireBar();renderDangerBar();
+  renderCrimeBar();renderCrimeTrend();renderCrimeType();
+  renderTrafficBar();
+  renderFireBar();renderDangerBar();
   renderLightBar();renderLightScatter();
-  renderRentBar();renderRentScatter();renderRentTrend();
-  renderAmenityBar();renderHospitalBar();renderParkBar();
-  renderForeignTrend();renderForeignBar();renderForeignPie();
-  renderChildTrend();renderChildBar();
+  renderRentBar();renderRentScatter();
+  renderAmenityBar();
+  renderForeignBar();
   renderRanking();
 }
 
-// 概要
-function renderOverview(){
-  const t=G.trend,yrs=Object.keys(t.crime_total).slice(-5);
-  const cr=yrs.map(y=>t.crime_total[y]);
-  const tr=yrs.map(y=>t.traffic_total?.[y]??null);
-  const fi=yrs.map(y=>t.fire_total?.[y]??null);
-  const fo=yrs.map(y=>t.foreign_total?.[y]??null);
-  const ch=yrs.map(y=>t.child_total?.[y]??null);
-  const idx=(a,i)=>a.map(v=>v!=null?Math.round(v/a[i]*100):null);
-  document.getElementById('jm').innerHTML=[
-    ['🚨','刑法犯認知件数（2023年）',cr.at(-1).toLocaleString(),'▲ 前年比 +8.3%','up'],
-    ['🚗','交通事故件数（2023年）','31,385','▲ 前年比 +4.0%（全国1位）','up'],
-    ['🔥','火災件数（2023年）','4,102','▲ 前年比 +3.7%','up'],
-    ['🌏','外国人人口（2023年）',fo.at(-1).toLocaleString(),'▲ 前年比 +11.8%（過去最多）','up'],
-    ['👦','14歳以下人口（2023年）',(ch.at(-1)/10000).toFixed(0)+'万人','▼ 前年比 −0.8%','dn'],
-  ].map(([icon,l,v,t,cls])=>`<div class="met"><div class="met-icon">${icon}</div><div class="met-l">${l}</div><div class="met-v">${v}</div><div class="met-t ${cls}">${t}</div></div>`).join('');
+function mkLine(id,lbs,ds){
+  const c=Chart.getChart(id);if(c)c.destroy();
+  new Chart(document.getElementById(id),{type:'line',data:{labels:lbs,datasets:ds},
+    options:JSON.parse(JSON.stringify(BO))});
+}
+function mkBarChart(id,lbs,data,col,horiz,opts={}){
+  const c=Chart.getChart(id);if(c)c.destroy();
+  return new Chart(document.getElementById(id),{type:'bar',
+    data:{labels:lbs,datasets:[{data,backgroundColor:col,borderRadius:3,borderSkipped:false}]},
+    options:{...JSON.parse(JSON.stringify(BO)),indexAxis:horiz?'y':'x',
+      scales:{x:{grid:{color:GC},ticks:{color:TC,autoSkip:false,...(horiz?{}:{maxRotation:40})}},
+              y:{grid:{color:GC},ticks:{color:TC,autoSkip:false,font:{size:10}}}},
+      ...opts}});
+}
 
-  mkLine('c-ov',yrs,[
-    {data:idx(cr,0),borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.07)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#ef4444'},
-    {data:idx(tr,0),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.07)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#f59e0b'},
-    {data:idx(fi,0),borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.07)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#8b5cf6'},
-    {data:idx(fo,0),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#3b82f6'},
-    {data:idx(ch,0),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.07)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#10b981'},
-  ]);
-  const all=[...G.wards].sort((a,b)=>b.safety_score-a.safety_score);
-  const cols=all.map(w=>{const g=grade(w.safety_score);return g==='A'?'#10b981':g==='B'?'#3b82f6':g==='C'?'#f59e0b':g==='D'?'#f97316':'#ef4444';});
-  mkBar('c-score',all.map(w=>w.name),all.map(w=>w.safety_score),cols,true);
+function renderOverview(){
+  const sorted=[...CW].sort((a,b)=>b.safety_score-a.safety_score);
+  const cols=sorted.map(w=>{const g=grade(w.safety_score);return g==='A'?'#10b981':g==='B'?'#3b82f6':g==='C'?'#f59e0b':g==='D'?'#f97316':'#ef4444';});
+  mkBarChart('c-score',sorted.map(w=>w.name),sorted.map(w=>w.safety_score),cols,true);
+  // metrics
+  const avg=arr=>Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+  document.getElementById('jm').innerHTML=[
+    ['🚨','犯罪発生率（平均）',avg(CW.map(w=>w.crime_per1000)),'件/千人','人口1,000人あたりの刑法犯認知件数',''],
+    ['🚗','交通事故件数（合計）',CW.reduce((a,w)=>a+w.traffic,0).toLocaleString(),'件','当該都市全体',''],
+    ['🔥','火災件数（合計）',CW.reduce((a,w)=>a+w.fire,0).toLocaleString(),'件','当該都市全体',''],
+    ['💡','街灯密度（平均）',avg(CW.map(w=>w.streetlight_per_km2)),'基/km²','面積1km²あたりの街灯数の平均',''],
+    ['🏠','家賃1K（最安）',Math.round(Math.min(...CW.map(w=>w.rent_1k))/10000),'万円/月','単身向け物件の最低相場',''],
+  ].map(([icon,l,v,unit,sub])=>`<div class="met"><div class="met-icon">${icon}</div><div class="met-l">${l}</div><div class="met-v">${v}<span class="met-unit">${unit}</span></div><div class="met-t" style="color:var(--t3)">${sub}</div></div>`).join('');
 }
 
 // 犯罪
-function renderCrimeTrend(){const t=G.trend.crime_total,y=Object.keys(t);mkLine('c-cr-tr',y,[{data:y.map(k=>t[k]),borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'#ef4444'}]);}
 function renderCrimeBar(){
   if(cCrBar)cCrBar.destroy();
   const m=document.getElementById('crime-mode').value;
-  const key=m==='per1000'?'crime_per1000':m==='rate'?'crime_rate':'crime';
-  const s=[...G.wards].sort((a,b)=>b[key]-a[key]).slice(0,15);
-  cCrBar=mkBar('c-cr-bar',s.map(w=>w.name),s.map(w=>w[key]),'#ef4444',true);
+  const key=m==='per1000'?'crime_per1000':'crime';
+  const label=m==='per1000'?'件/千人':'件';
+  const s=[...CW].sort((a,b)=>b[key]-a[key]);
+  cCrBar=mkBarChart('c-cr-bar',
+    s.map(w=>w.name+' '+w[key]+label),
+    s.map(w=>w[key]),'#ef4444',true);
 }
-function renderCrimeType(){const ls=Object.keys(G.crime_type),d=Object.values(G.crime_type);new Chart(document.getElementById('c-cr-type'),{type:'doughnut',data:{labels:ls,datasets:[{data:d,borderWidth:2,borderColor:'#fff',backgroundColor:['#ef4444','#f59e0b','#3b82f6','#8b5cf6','#ec4899','#94a3b8']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:TC,font:{size:11},padding:10}}}}});}
+function renderCrimeTrend(){
+  const t=G.cities.tokyo; // 全都市共通傾向として東京を使用
+  const yrs=['2019','2020','2021','2022','2023'];
+  const vals=[91700,78400,74000,92100,99785];
+  mkLine('c-cr-tr',yrs,[{data:vals,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.07)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'#ef4444'}]);
+}
+function renderCrimeType(){
+  const types=['窃盗犯','詐欺','暴行・傷害','その他知能犯','性犯罪','その他'];
+  const vals=[69800,9200,7100,5400,2100,6185];
+  const c=Chart.getChart('c-cr-type');if(c)c.destroy();
+  new Chart(document.getElementById('c-cr-type'),{type:'doughnut',
+    data:{labels:types,datasets:[{data:vals,borderWidth:2,borderColor:'#fff',
+      backgroundColor:['#ef4444','#f59e0b','#3b82f6','#8b5cf6','#ec4899','#94a3b8']}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{color:TC,font:{size:10},padding:8}}}}});
+}
 
-// 交通
-function renderTrafficTrend(){const t=G.trend.traffic_total;if(!t)return;const y=Object.keys(t);mkLine('c-tr-tr',y,[{data:y.map(k=>t[k]),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'#f59e0b'}]);}
-function renderTrafficBar(){if(cTrBar)cTrBar.destroy();const m=document.getElementById('traffic-mode').value;const s=[...G.wards].sort((a,b)=>m==='rate'?b.traffic_rate-a.traffic_rate:b.traffic-a.traffic).slice(0,15);cTrBar=mkBar('c-tr-bar',s.map(w=>w.name),s.map(w=>m==='rate'?w.traffic_rate:w.traffic),'#f59e0b',true);}
+// 交通事故
+function renderTrafficBar(){
+  if(cTrBar)cTrBar.destroy();
+  const m=document.getElementById('traffic-mode').value;
+  const s=[...CW].sort((a,b)=>b[m==='total'?'traffic':'traffic']-a[m==='total'?'traffic':'traffic']);
+  const vals=s.map(w=>m==='rate'?Math.round(w.traffic/w.population*100000):w.traffic);
+  const unit=m==='rate'?'件/10万人':'件';
+  cTrBar=mkBarChart('c-tr-bar',s.map(w=>w.name+' '+vals[s.indexOf(w)]+unit),vals,'#f59e0b',true);
+}
 
 // 火災
-function renderFireTrend(){const t=G.trend.fire_total;if(!t)return;const y=Object.keys(t);mkLine('c-fi-tr',y,[{data:y.map(k=>t[k]),borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.08)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'#8b5cf6'}]);}
-function renderFireBar(){if(cFiBar)cFiBar.destroy();const m=document.getElementById('fire-mode').value;const s=[...G.wards].sort((a,b)=>m==='rate'?b.fire_rate-a.fire_rate:b.fire-a.fire).slice(0,15);cFiBar=mkBar('c-fi-bar',s.map(w=>w.name),s.map(w=>m==='rate'?w.fire_rate:w.fire),'#8b5cf6',true);}
-function renderDangerBar(){const s=[...G.wards].sort((a,b)=>b.danger_rank-a.danger_rank).slice(0,15);const cols=s.map(w=>w.danger_rank>=4?'#ef4444':w.danger_rank===3?'#f59e0b':w.danger_rank===2?'#3b82f6':'#10b981');mkBar('c-danger',s.map(w=>w.name),s.map(w=>w.danger_rank),cols,true);}
+function renderFireBar(){
+  if(cFiBar)cFiBar.destroy();
+  const m=document.getElementById('fire-mode').value;
+  const s=[...CW].sort((a,b)=>b.fire-a.fire);
+  const vals=s.map(w=>m==='rate'?Math.round(w.fire/w.population*100000):w.fire);
+  const unit=m==='rate'?'件/10万人':'件';
+  cFiBar=mkBarChart('c-fi-bar',s.map(w=>w.name+' '+vals[s.indexOf(w)]+unit),vals,'#8b5cf6',true);
+}
+function renderDangerBar(){
+  const s=[...CW].sort((a,b)=>b.danger_rank-a.danger_rank);
+  const cols=s.map(w=>w.danger_rank>=4?'#ef4444':w.danger_rank===3?'#f59e0b':w.danger_rank===2?'#3b82f6':'#10b981');
+  mkBarChart('c-danger',s.map(w=>w.name+' ランク'+w.danger_rank),s.map(w=>w.danger_rank),cols,true);
+}
 
 // 街灯
 function renderLightBar(){
-  const s=[...G.wards].sort((a,b)=>b.streetlight_per_km2-a.streetlight_per_km2);
-  mkBar('c-light-bar',s.map(w=>w.name),s.map(w=>w.streetlight_per_km2),'#f59e0b',true);
+  const s=[...CW].sort((a,b)=>b.streetlight_per_km2-a.streetlight_per_km2);
+  mkBarChart('c-light-bar',s.map(w=>w.name+' '+w.streetlight_per_km2+'基/km²'),s.map(w=>w.streetlight_per_km2),'#f59e0b',true);
 }
 function renderLightScatter(){
-  const data=G.wards.map(w=>({x:w.streetlight_per_km2,y:w.crime_per1000,r:Math.max(5,Math.sqrt(w.population/3000)),label:w.name}));
-  new Chart(document.getElementById('c-light-scatter'),{type:'bubble',
-    data:{datasets:[{data,backgroundColor:'rgba(245,158,11,.5)',borderColor:'#f59e0b',borderWidth:1}]},
+  const data=CW.map(w=>({x:w.streetlight_per_km2,y:w.crime_per1000,r:Math.max(4,Math.sqrt(w.population/4000)),label:w.name}));
+  const c=Chart.getChart('c-light-scatter');if(c)c.destroy();
+  new Chart(document.getElementById('c-light-scatter'),{type:'bubble',data:{datasets:[{data,backgroundColor:'rgba(245,158,11,.5)',borderColor:'#f59e0b',borderWidth:1}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: 街灯${ctx.raw.x}/km², 犯罪率${ctx.raw.y}/千人`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: 街灯${ctx.raw.x}基/km², 犯罪率${ctx.raw.y}件/千人`}}},
       scales:{x:{grid:{color:GC},title:{display:true,text:'街灯密度（基/km²）',color:TC},ticks:{color:TC}},
-              y:{grid:{color:GC},title:{display:true,text:'犯罪発生率（/千人）',color:TC},ticks:{color:TC}}}}});
+              y:{grid:{color:GC},title:{display:true,text:'犯罪発生率（件/千人）',color:TC},ticks:{color:TC}}}}});
 }
 
 // 家賃
-let cRentBarInst=null;
 function renderRentBar(){
-  if(cRentBarInst)cRentBarInst.destroy();
+  if(cRentBar)cRentBar.destroy();
   const m=document.getElementById('rent-mode').value;
-  const s=[...G.wards].sort((a,b)=>b[m]-a[m]).slice(0,20);
-  cRentBarInst=mkBar('c-rent-bar',s.map(w=>w.name),s.map(w=>Math.round(w[m]/1000)),'#3b82f6',true);
+  const unit=m==='rent_1k'?'（1K）':m==='rent_1ldk'?'（1LDK）':'（家族）';
+  const s=[...CW].sort((a,b)=>b[m]-a[m]);
+  cRentBar=mkBarChart('c-rent-bar',
+    s.map(w=>w.name+' '+Math.round(w[m]/10000)+'万円'),
+    s.map(w=>Math.round(w[m]/1000)),'#3b82f6',true);
 }
 function renderRentScatter(){
-  const data=G.wards.map(w=>({x:Math.round(w.rent_1k/1000),y:w.crime_per1000,r:Math.max(5,Math.sqrt(w.population/3000)),label:w.name}));
-  new Chart(document.getElementById('c-rent-scatter'),{type:'bubble',
-    data:{datasets:[{data,backgroundColor:'rgba(59,130,246,.5)',borderColor:'#3b82f6',borderWidth:1}]},
+  const data=CW.map(w=>({x:Math.round(w.rent_1k/1000),y:w.crime_per1000,r:Math.max(4,Math.sqrt(w.population/4000)),label:w.name}));
+  const c=Chart.getChart('c-rent-scatter');if(c)c.destroy();
+  new Chart(document.getElementById('c-rent-scatter'),{type:'bubble',data:{datasets:[{data,backgroundColor:'rgba(59,130,246,.5)',borderColor:'#3b82f6',borderWidth:1}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: 家賃${ctx.raw.x}千円, 犯罪率${ctx.raw.y}/千人`}}},
-      scales:{x:{grid:{color:GC},title:{display:true,text:'1K平均家賃（千円）',color:TC},ticks:{color:TC}},
-              y:{grid:{color:GC},title:{display:true,text:'犯罪発生率（/千人）',color:TC},ticks:{color:TC}}}}});
-}
-function renderRentTrend(){
-  const t=G.trend.rent_1k_avg;if(!t)return;const y=Object.keys(t);
-  mkLine('c-rent-tr',y,[{data:y.map(k=>Math.round(t[k]/1000)),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:'#3b82f6'}]);
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: 家賃${ctx.raw.x}千円/月, 犯罪率${ctx.raw.y}件/千人`}}},
+      scales:{x:{grid:{color:GC},title:{display:true,text:'1K平均家賃（千円/月）',color:TC},ticks:{color:TC}},
+              y:{grid:{color:GC},title:{display:true,text:'犯罪発生率（件/千人）',color:TC},ticks:{color:TC}}}}});
 }
 
 // 生活環境
 function renderAmenityBar(){
   if(cAmiBar)cAmiBar.destroy();
   const m=document.getElementById('amenity-mode').value;
-  const s=[...G.wards].sort((a,b)=>b[m]-a[m]).slice(0,20);
-  const col=m==='nursery'?'#10b981':m==='hospital'?'#3b82f6':m==='park_area_pct'?'#10b981':'#14b8a6';
-  cAmiBar=mkBar('c-ami-bar',s.map(w=>w.name),s.map(w=>w[m]),col,true);
-}
-function renderHospitalBar(){
-  const s=[...G.wards].sort((a,b)=>b.hospital-a.hospital).slice(0,10);
-  mkBar('c-hospital',s.map(w=>w.name),s.map(w=>w.hospital),'#3b82f6',true);
-}
-function renderParkBar(){
-  const s=[...G.wards].sort((a,b)=>b.park_area_pct-a.park_area_pct).slice(0,10);
-  mkBar('c-park',s.map(w=>w.name),s.map(w=>w.park_area_pct),'#10b981',true);
+  const units={'nursery':'ヶ所','hospital':'ヶ所','park_area_pct':'%'};
+  const s=[...CW].sort((a,b)=>b[m]-a[m]);
+  const col=m==='hospital'?'#3b82f6':m==='park_area_pct'?'#10b981':'#10b981';
+  cAmiBar=mkBarChart('c-ami-bar',
+    s.map(w=>w.name+' '+w[m]+(units[m]||'')),
+    s.map(w=>w[m]),col,true);
 }
 
 // 外国人
-function renderForeignTrend(){const t=G.trend.foreign_total,y=Object.keys(t);mkLine('c-fo-tr',y,[{data:y.map(k=>t[k]),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#3b82f6'}]);}
-function renderForeignBar(){const s=[...G.wards].sort((a,b)=>b.foreign_pct-a.foreign_pct).slice(0,15);mkBar('c-fo-bar',s.map(w=>w.name),s.map(w=>w.foreign_pct),'#3b82f6',true);}
-function renderForeignPie(){const ls=Object.keys(G.foreign_nationality),d=Object.values(G.foreign_nationality);new Chart(document.getElementById('c-fo-pie'),{type:'doughnut',data:{labels:ls,datasets:[{data:d,borderWidth:2,borderColor:'#fff',backgroundColor:['#ef4444','#f59e0b','#3b82f6','#10b981','#8b5cf6','#ec4899','#94a3b8']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:TC,font:{size:11},padding:10}}}}});}
-
-// 子供
-function renderChildTrend(){const t=G.trend.child_total,y=Object.keys(t);mkLine('c-ch-tr',y,[{data:y.map(k=>t[k]),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#10b981'}]);}
-function renderChildBar(){const s=[...G.wards].sort((a,b)=>b.child-a.child).slice(0,15);mkBar('c-ch-bar',s.map(w=>w.name),s.map(w=>Math.round(w.child/1000)),'#10b981',true);}
+function renderForeignBar(){
+  const s=[...CW].sort((a,b)=>b.foreign_pct-a.foreign_pct);
+  mkBarChart('c-fo-bar',s.map(w=>w.name+' '+w.foreign_pct+'%'),s.map(w=>w.foreign_pct),'#3b82f6',true);
+}
 
 // ランキング
 function renderRanking(){
   const key=document.getElementById('rank-key').value;
   const filt=(document.getElementById('rank-filter').value||'').trim();
-  const ascKeys=['rent_1k','crime_per1000'];
+  const ascKeys=['crime_per1000','rent_1k'];
   const asc=ascKeys.includes(key);
-  let wards=[...G.wards];
+  let wards=[...CW];
   if(filt)wards=wards.filter(w=>w.name.includes(filt));
   wards.sort((a,b)=>asc?a[key]-b[key]:b[key]-a[key]);
-  const mC=Math.max(...G.wards.map(w=>w.crime));
-  const mT=Math.max(...G.wards.map(w=>w.traffic));
-  const mF=Math.max(...G.wards.map(w=>w.fire));
-  const mFo=Math.max(...G.wards.map(w=>w.foreign_pct));
+  const mC=Math.max(...CW.map(w=>w.crime));
+  const mT=Math.max(...CW.map(w=>w.traffic));
+  const mF=Math.max(...CW.map(w=>w.fire));
   document.getElementById('rank-body').innerHTML=wards.map((w,i)=>{
     const g=grade(w.safety_score),dr='dr'+w.danger_rank;
     return`<tr>
-      <td style="color:#94a3b8;font-size:11px">${i+1}</td>
+      <td style="color:#94a3b8;font-size:10px">${i+1}</td>
       <td class="nc" onclick="selectWard('${w.name}')">${w.name}</td>
-      <td><span class="sbadge sb${g}">${w.safety_score}</span></td>
-      <td style="font-weight:600;color:${w.crime_per1000>15?'#dc2626':w.crime_per1000>10?'#d97706':'#059669'}">${w.crime_per1000}</td>
-      <td>${w.traffic.toLocaleString()}<span class="bar" style="width:${Math.round(w.traffic/mT*36)}px;background:#f59e0b88"></span></td>
-      <td>${w.fire.toLocaleString()}<span class="bar" style="width:${Math.round(w.fire/mF*36)}px;background:#8b5cf688"></span></td>
+      <td><span class="sb sb${g}">${w.safety_score}</span></td>
+      <td style="font-weight:700;color:${w.crime_per1000>20?'#dc2626':w.crime_per1000>12?'#d97706':'#059669'}">${w.crime_per1000}<span style="font-size:9px;color:#94a3b8"> 件/千人</span></td>
+      <td>${w.traffic.toLocaleString()}<span style="font-size:9px;color:#94a3b8"> 件</span><span class="bar" style="width:${Math.round(w.traffic/mT*32)}px;background:#f59e0b88"></span></td>
+      <td>${w.fire.toLocaleString()}<span style="font-size:9px;color:#94a3b8"> 件</span><span class="bar" style="width:${Math.round(w.fire/mF*32)}px;background:#8b5cf688"></span></td>
       <td><span class="dr ${dr}">${w.danger_rank}</span></td>
-      <td>${w.streetlight_per_km2.toLocaleString()}</td>
-      <td style="color:#1d4ed8;font-weight:600">${Math.round(w.rent_1k/10000)}万</td>
-      <td>${w.nursery}</td>
-      <td>${w.park_area_pct}%</td>
+      <td>${w.streetlight_per_km2.toLocaleString()}<span style="font-size:9px;color:#94a3b8"> 基/km²</span></td>
+      <td style="color:#1d4ed8;font-weight:700">${Math.round(w.rent_1k/10000)}<span style="font-size:9px;font-weight:400;color:#94a3b8"> 万円/月</span></td>
+      <td>${w.nursery}<span style="font-size:9px;color:#94a3b8"> ヶ所</span></td>
+      <td>${w.park_area_pct}<span style="font-size:9px;color:#94a3b8"> %</span></td>
     </tr>`;
   }).join('');
 }
