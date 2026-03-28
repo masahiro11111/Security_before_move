@@ -2,88 +2,142 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>東京都 地域安全ダッシュボード</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
-  --bg0:#ffffff;--bg1:#f6f5f0;--bg2:#eeede8;
-  --t1:#1a1a18;--t2:#5f5e5a;--t3:#9b9a94;
-  --b1:rgba(0,0,0,.1);--b2:rgba(0,0,0,.18);
-  --red:#E24B4A;--blue:#378ADD;--green:#1D9E75;--amber:#EF9F27;
+  --bg0:#fff;--bg1:#f6f5f0;--bg2:#eeecea;--bg3:#e5e3e0;
+  --t1:#1a1a18;--t2:#5f5e5a;--t3:#9b9a94;--t4:#c2c0b8;
+  --b1:rgba(0,0,0,.09);--b2:rgba(0,0,0,.16);
+  --red:#E24B4A;--blue:#378ADD;--green:#1D9E75;--amber:#EF9F27;--purple:#7F77DD;
   --r8:8px;--r12:12px;--r16:16px;
 }
-@media(prefers-color-scheme:dark){
-  :root{--bg0:#1c1c1a;--bg1:#242422;--bg2:#2e2e2c;--t1:#e8e6de;--t2:#9c9a92;--t3:#6b6a64;--b1:rgba(255,255,255,.09);--b2:rgba(255,255,255,.16)}
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg0:#1c1c1a;--bg1:#232320;--bg2:#2c2c28;--bg3:#363630;
+  --t1:#e8e6de;--t2:#9c9a92;--t3:#6b6a64;--t4:#48473f;
+  --b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15)}}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg1);color:var(--t1);font-size:14px;line-height:1.6}
-a{color:inherit;text-decoration:none}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+  background:var(--bg1);color:var(--t1);font-size:14px;line-height:1.6}
 
-/* Header */
-.hdr{background:var(--bg0);border-bottom:.5px solid var(--b1);position:sticky;top:0;z-index:100}
-.hdr-in{max-width:980px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.hdr-title{font-size:15px;font-weight:700;color:var(--t1)}
-.hdr-sub{font-size:11px;color:var(--t3);margin-top:2px}
-.hdr-r{display:flex;align-items:center;gap:10px;font-size:12px;flex-wrap:wrap}
-.updated{color:var(--t3)}
-.updated span{color:var(--t2);font-weight:500}
-.src-links{display:flex;gap:8px}
-.src-links a{font-size:11px;color:var(--blue);text-decoration:underline}
+.hdr{background:var(--bg0);border-bottom:.5px solid var(--b1);position:sticky;top:0;z-index:200}
+.hdr-in{max-width:1020px;margin:0 auto;padding:.7rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.hdr-title{font-size:15px;font-weight:700}
+.hdr-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.hdr-r{display:flex;align-items:center;gap:10px;font-size:12px}
+.updated{color:var(--t3)} .updated b{color:var(--t2)}
+.src-links a{font-size:11px;color:var(--blue);text-decoration:underline;margin-left:8px}
 
-/* Main */
-.main{max-width:980px;margin:0 auto;padding:1.25rem}
+/* Search */
+.search-hero{background:var(--bg0);border-bottom:.5px solid var(--b1);padding:1rem 1.25rem}
+.search-inner{max-width:1020px;margin:0 auto}
+.search-label{font-size:12px;color:var(--t3);margin-bottom:6px}
+.search-row{display:flex;gap:8px;align-items:center;position:relative}
+.search-input{width:340px;padding:10px 14px;font-size:15px;border:.5px solid var(--b2);
+  border-radius:var(--r8);background:var(--bg1);color:var(--t1);font-family:inherit;
+  outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--blue)}
+.search-input::placeholder{color:var(--t4)}
+.search-clear{padding:6px 12px;border:.5px solid var(--b2);border-radius:var(--r8);
+  background:transparent;color:var(--t3);cursor:pointer;font-size:13px;display:none;font-family:inherit}
+.suggest-list{position:absolute;top:calc(100% + 4px);left:0;width:340px;
+  background:var(--bg0);border:.5px solid var(--b2);border-radius:var(--r8);
+  box-shadow:0 4px 20px rgba(0,0,0,.13);z-index:400;max-height:260px;overflow-y:auto;display:none}
+.suggest-list.show{display:block}
+.sug-item{padding:9px 14px;cursor:pointer;font-size:14px;border-bottom:.5px solid var(--b1)}
+.sug-item:last-child{border-bottom:none}
+.sug-item:hover,.sug-item.focus{background:var(--bg2)}
+.sug-item .hi{color:var(--blue);font-weight:700}
+.search-hint{font-size:12px;color:var(--t3);margin-top:6px}
 
-/* Tabs */
+/* Ward detail */
+.ward-detail{max-width:1020px;margin:.75rem auto;padding:0 1.25rem;display:none}
+.wd-card{background:var(--bg0);border:.5px solid var(--b1);border-radius:var(--r16);padding:1.25rem}
+.wd-head{display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.wd-name{font-size:22px;font-weight:700}
+.wd-pop{font-size:13px;color:var(--t3);margin-top:2px}
+.wd-score-wrap{text-align:right}
+.wd-score-lbl{font-size:11px;color:var(--t3)}
+.wd-score{font-size:36px;font-weight:700;line-height:1}
+.wd-grade{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-top:4px}
+.gA{background:#e1f5ee;color:#0f6e56} .gB{background:#e6f1fb;color:#185fa5}
+.gC{background:#faeeda;color:#854f0b} .gD{background:#faece7;color:#993c1d}
+.gE{background:#fcebeb;color:#a32d2d}
+.wd-mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-bottom:1rem}
+.wd-met{background:var(--bg2);border-radius:var(--r8);padding:.75rem}
+.wd-met-icon{font-size:18px;margin-bottom:3px}
+.wd-met-lbl{font-size:11px;color:var(--t3);margin-bottom:2px}
+.wd-met-val{font-size:17px;font-weight:700;line-height:1.2}
+.wd-met-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.wd-bars{margin-top:.5rem}
+.wd-br{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.wd-br-lbl{width:130px;color:var(--t2);text-align:right;flex-shrink:0}
+.wd-br-track{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.wd-br-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.wd-br-val{width:52px;color:var(--t2);font-size:11px}
+.wd-close{margin-top:1rem;float:right;padding:6px 14px;border:.5px solid var(--b2);
+  border-radius:20px;background:transparent;color:var(--t3);cursor:pointer;font-size:12px;font-family:inherit}
+
+.main{max-width:1020px;margin:0 auto;padding:1.25rem}
 .tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
-.tab{padding:6px 16px;border:.5px solid var(--b1);border-radius:20px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit}
+.tab{padding:6px 16px;border:.5px solid var(--b1);border-radius:20px;background:transparent;
+  color:var(--t2);font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit}
 .tab:hover{border-color:var(--b2);color:var(--t1)}
 .tab.on{background:var(--t1);color:var(--bg0);border-color:transparent}
-
-/* Section */
 .sec{display:none}.sec.on{display:block}
-
-/* Loading */
-.loading{text-align:center;padding:4rem;color:var(--t3);font-size:14px}
-.err{background:#fcebeb;border:.5px solid #f09595;border-radius:var(--r8);padding:.75rem 1rem;color:#a32d2d;font-size:13px;margin-bottom:1rem;display:none}
-
-/* Metrics */
-.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:1.25rem}
+.loading{text-align:center;padding:4rem;color:var(--t3)}
+.errmsg{background:#fcebeb;border:.5px solid #f09595;border-radius:var(--r8);
+  padding:.75rem 1rem;color:#a32d2d;font-size:13px;margin-bottom:1rem;display:none}
+.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:1.25rem}
 .met{background:var(--bg2);border-radius:var(--r8);padding:.875rem 1rem}
 .met-l{font-size:11px;color:var(--t3);margin-bottom:4px}
-.met-v{font-size:21px;font-weight:700;color:var(--t1);line-height:1.2}
+.met-v{font-size:20px;font-weight:700;line-height:1.2}
 .met-t{font-size:11px;margin-top:4px}
 .up{color:#c04828}.dn{color:var(--green)}
-
-/* Card */
 .card{background:var(--bg0);border:.5px solid var(--b1);border-radius:var(--r16);padding:1.25rem;margin-bottom:1.25rem}
 .card-title{font-size:14px;font-weight:700;margin-bottom:4px}
 .card-desc{font-size:12px;color:var(--t2);margin-bottom:1rem}
-.card-desc select{font-size:12px;padding:3px 6px;border:.5px solid var(--b2);border-radius:6px;background:var(--bg2);color:var(--t1);margin-left:4px;font-family:inherit}
+.card-desc select{font-size:12px;padding:3px 6px;border:.5px solid var(--b2);border-radius:6px;
+  background:var(--bg2);color:var(--t1);margin-left:4px;font-family:inherit}
 .cw{position:relative;width:100%}
 .leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:.75rem;font-size:12px;color:var(--t2)}
 .ld{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
-.src-note{font-size:11px;color:var(--t3);margin-bottom:1rem}
-
-/* Table */
-.tbl-wrap{overflow-x:auto}
-.tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{font-size:11px;font-weight:600;color:var(--t3);padding:6px 10px;border-bottom:.5px solid var(--b1);text-align:left;white-space:nowrap}
-.tbl td{padding:8px 10px;border-bottom:.5px solid var(--b1);color:var(--t1);white-space:nowrap}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:var(--bg2)}
-.bar{height:6px;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:6px;min-width:2px}
-
-/* Filter row */
 .frow{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .frow label{font-size:13px;color:var(--t2)}
-.frow select,.frow input{font-size:13px;padding:5px 8px;border:.5px solid var(--b2);border-radius:var(--r8);background:var(--bg2);color:var(--t1);font-family:inherit}
+.frow select,.frow input{font-size:13px;padding:5px 8px;border:.5px solid var(--b2);
+  border-radius:var(--r8);background:var(--bg2);color:var(--t1);font-family:inherit}
 .frow input{width:160px}
-
-/* Info box */
-.info{background:rgba(55,138,221,.1);border:.5px solid rgba(55,138,221,.35);border-radius:var(--r8);padding:.75rem 1rem;font-size:12px;color:var(--blue);margin-bottom:1.25rem}
-
-@media(max-width:600px){.hdr-in{flex-direction:column;align-items:flex-start}.met-v{font-size:18px}}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:11px;font-weight:600;color:var(--t3);padding:6px 9px;
+  border-bottom:.5px solid var(--b1);text-align:left;white-space:nowrap}
+.tbl td{padding:7px 9px;border-bottom:.5px solid var(--b1);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg2)}
+.nc{font-weight:700;cursor:pointer;color:var(--blue)}.nc:hover{text-decoration:underline}
+.bar{height:5px;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:5px;min-width:2px}
+.sbadge{display:inline-block;width:30px;height:30px;border-radius:50%;
+  font-size:11px;font-weight:700;text-align:center;line-height:30px}
+.sbA{background:#e1f5ee;color:#0f6e56}.sbB{background:#e6f1fb;color:#185fa5}
+.sbC{background:#faeeda;color:#854f0b}.sbD{background:#faece7;color:#993c1d}
+.sbE{background:#fcebeb;color:#a32d2d}
+.dr{display:inline-block;width:22px;height:22px;border-radius:4px;
+  font-size:11px;font-weight:700;text-align:center;line-height:22px}
+.dr1{background:#e1f5ee;color:#0f6e56}.dr2{background:#e6f1fb;color:#185fa5}
+.dr3{background:#faeeda;color:#854f0b}.dr4{background:#faece7;color:#993c1d}
+.dr5{background:#fcebeb;color:#a32d2d}
+.info{background:rgba(55,138,221,.09);border:.5px solid rgba(55,138,221,.3);
+  border-radius:var(--r8);padding:.75rem 1rem;font-size:12px;color:var(--blue);margin-bottom:1.25rem}
+.src-note{font-size:11px;color:var(--t3);margin-bottom:1rem}
+@media(max-width:640px){
+  .hdr-in{flex-direction:column;align-items:flex-start}
+  .search-input{width:100%}.suggest-list{width:100%}
+  .wd-mets{grid-template-columns:repeat(2,1fr)}
+  .wd-name{font-size:18px}
+}
 </style>
 </head>
 <body>
@@ -91,74 +145,147 @@ a{color:inherit;text-decoration:none}
 <header class="hdr">
   <div class="hdr-in">
     <div>
-      <div class="hdr-title">🏙 東京都 地域安全・人口動態ダッシュボード</div>
-      <div class="hdr-sub">引越し前に確認できる治安・人口指標 ／ 出典：警視庁・東京都統計局</div>
+      <div class="hdr-title">🏙 東京都 地域安全ダッシュボード</div>
+      <div class="hdr-sub">引越し前に確認できる治安・人口指標 ／ 出典：警視庁・東京都統計局・東京消防庁・都市整備局</div>
     </div>
     <div class="hdr-r">
-      <div class="updated">最終更新：<span id="js-updated">読み込み中…</span></div>
-      <div class="src-links">
-        <a href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">警視庁</a>
-        <a href="https://www.toukei.metro.tokyo.lg.jp/gaikoku/ga-index.htm" target="_blank">東京都統計局</a>
+      <div class="updated">更新：<b id="js-updated">読込中…</b></div>
+      <div>
+        <a class="src-links" href="https://www.keishicho.metro.tokyo.lg.jp/about_mpd/jokyo_tokei/jokyo/hanzai.html" target="_blank">警視庁</a>
+        <a class="src-links" href="https://www.tfd.metro.tokyo.lg.jp/" target="_blank">消防庁</a>
+        <a class="src-links" href="https://www.toukei.metro.tokyo.lg.jp/gaikoku/ga-index.htm" target="_blank">統計局</a>
       </div>
     </div>
   </div>
 </header>
 
+<div class="search-hero">
+  <div class="search-inner">
+    <div class="search-label">🔍 区・市名で地域を検索して詳細を確認</div>
+    <div class="search-row" id="srow">
+      <input class="search-input" id="si" type="text"
+        placeholder="例：新宿区、世田谷区、八王子市…" autocomplete="off">
+      <button class="search-clear" id="sc" onclick="clearSearch()">✕ クリア</button>
+      <div class="suggest-list" id="sl"></div>
+    </div>
+    <div class="search-hint" id="sh">区名・市名の一部を入力すると候補が表示されます</div>
+  </div>
+</div>
+
+<div class="ward-detail" id="wd">
+  <div class="wd-card">
+    <div class="wd-head">
+      <div><div class="wd-name" id="wd-name"></div><div class="wd-pop" id="wd-pop"></div></div>
+      <div class="wd-score-wrap">
+        <div class="wd-score-lbl">総合治安スコア（100点満点・高い＝安全）</div>
+        <div class="wd-score" id="wd-score"></div>
+        <div><span class="wd-grade" id="wd-grade"></span></div>
+      </div>
+    </div>
+    <div class="wd-mets" id="wd-mets"></div>
+    <div class="wd-bars" id="wd-bars"></div>
+    <div style="overflow:hidden"><button class="wd-close" onclick="clearSearch()">✕ 閉じる</button></div>
+  </div>
+</div>
+
 <main class="main">
   <nav class="tabs">
     <button class="tab on" data-s="overview">概要</button>
     <button class="tab" data-s="crime">犯罪件数</button>
+    <button class="tab" data-s="traffic">交通事故</button>
+    <button class="tab" data-s="fire">火災・危険度</button>
     <button class="tab" data-s="foreign">外国人人口</button>
     <button class="tab" data-s="children">子供の数</button>
-    <button class="tab" data-s="ranking">区市町村ランキング</button>
+    <button class="tab" data-s="ranking">ランキング</button>
   </nav>
 
-  <div id="js-loading" class="loading">データを読み込んでいます…</div>
-  <div id="js-err" class="err"></div>
+  <div id="jl" class="loading">データを読み込んでいます…</div>
+  <div id="je" class="errmsg"></div>
 
-  <!-- 概要 -->
   <section class="sec on" id="s-overview">
-    <div class="info">最新データ：令和5年（2023年）／ 毎月自動更新（GitHub Actions）</div>
-    <div class="mets" id="js-mets"></div>
+    <div class="info">最新データ：令和5年（2023年）／ 毎月1日に GitHub Actions で自動更新</div>
+    <div class="mets" id="jm"></div>
     <div class="card">
-      <div class="card-title">主要3指標の年次推移（2019〜2023年）</div>
-      <div class="card-desc">2019年を100とした指数。コロナ禍で犯罪は急減→反転、外国人は2023年に過去最多。</div>
-      <div class="cw" style="height:280px"><canvas id="c-ov"></canvas></div>
+      <div class="card-title">主要5指標の年次推移（2019〜2023年、2019年＝100）</div>
+      <div class="card-desc">犯罪はコロナ禍で急減後に反転。外国人は2023年に過去最多。交通事故・火災も2021年底打ち後に増加。</div>
+      <div class="cw" style="height:300px"><canvas id="c-ov"></canvas></div>
       <div class="leg">
-        <span><span class="ld" style="background:var(--red)"></span>刑法犯認知件数</span>
-        <span><span class="ld" style="background:var(--blue)"></span>外国人人口</span>
-        <span><span class="ld" style="background:var(--green)"></span>14歳以下人口</span>
+        <span><span class="ld" style="background:#E24B4A"></span>刑法犯</span>
+        <span><span class="ld" style="background:#EF9F27"></span>交通事故</span>
+        <span><span class="ld" style="background:#7F77DD"></span>火災</span>
+        <span><span class="ld" style="background:#378ADD"></span>外国人</span>
+        <span><span class="ld" style="background:#1D9E75"></span>14歳以下</span>
       </div>
     </div>
-    <p class="src-note">出典：警視庁「東京の犯罪（令和5年版）」、東京都統計局「外国人人口」「住民基本台帳」</p>
+    <div class="card">
+      <div class="card-title">総合治安スコア ランキング（高い順＝安全）</div>
+      <div class="card-desc">犯罪率・交通事故率・火災率・地域危険度を統合した独自スコア（100点満点）</div>
+      <div class="cw" style="height:400px"><canvas id="c-score"></canvas></div>
+    </div>
+    <p class="src-note">出典：警視庁、東京消防庁、東京都統計局、東京都都市整備局「地域危険度一覧表（第9回）」</p>
   </section>
 
-  <!-- 犯罪 -->
   <section class="sec" id="s-crime">
     <div class="card">
       <div class="card-title">刑法犯認知件数の長期推移（東京都全体）</div>
-      <div class="card-desc">2014年をピークに大幅減少。コロナ禍の2021年に底を打ち、2022年より増加傾向に転換。</div>
-      <div class="cw" style="height:280px"><canvas id="c-crime-tr"></canvas></div>
+      <div class="card-desc">2014年ピーク→大幅減少。2021年底打ち後に増加転換。</div>
+      <div class="cw" style="height:280px"><canvas id="c-cr-tr"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">区別 刑法犯認知件数（2023年）</div>
-      <div class="card-desc">
-        表示切替：<select id="crime-mode" onchange="renderCrimeBar()">
-          <option value="total">総件数</option>
-          <option value="rate">人口10万人あたり</option>
-        </select>
-      </div>
-      <div class="cw" style="height:420px"><canvas id="c-crime-bar"></canvas></div>
+      <div class="card-title">区別 刑法犯認知件数（2023年・上位15）</div>
+      <div class="card-desc">表示：<select id="crime-mode" onchange="renderCrimeBar()">
+        <option value="total">総件数</option><option value="rate">人口10万人あたり</option></select></div>
+      <div class="cw" style="height:420px"><canvas id="c-cr-bar"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title">犯罪種別の構成（東京都・2023年）</div>
       <div class="card-desc">窃盗犯が約70%。詐欺・暴行傷害が続く。</div>
-      <div class="cw" style="height:260px"><canvas id="c-crime-type"></canvas></div>
+      <div class="cw" style="height:260px"><canvas id="c-cr-type"></canvas></div>
     </div>
     <p class="src-note">出典：警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」</p>
   </section>
 
-  <!-- 外国人 -->
+  <section class="sec" id="s-traffic">
+    <div class="card">
+      <div class="card-title">交通事故件数の年次推移（東京都全体）</div>
+      <div class="card-desc">2023年は31,385件で全国ワースト1位。コロナ明け後に増加傾向が続く。</div>
+      <div class="cw" style="height:280px"><canvas id="c-tr-tr"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">区別 交通事故件数（2023年・上位15）</div>
+      <div class="card-desc">表示：<select id="traffic-mode" onchange="renderTrafficBar()">
+        <option value="total">総件数</option><option value="rate">人口10万人あたり</option></select></div>
+      <div class="cw" style="height:420px"><canvas id="c-tr-bar"></canvas></div>
+    </div>
+    <p class="src-note">出典：警視庁「交通統計（令和5年版）」、警察庁「交通事故統計情報」</p>
+  </section>
+
+  <section class="sec" id="s-fire">
+    <div class="card">
+      <div class="card-title">火災件数の年次推移（東京都全体）</div>
+      <div class="card-desc">2021年に最少を記録後、緩やかに増加。木造密集地域の多い下町エリアで件数が多い傾向。</div>
+      <div class="cw" style="height:280px"><canvas id="c-fi-tr"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">区別 火災件数（2023年・上位15）</div>
+      <div class="card-desc">表示：<select id="fire-mode" onchange="renderFireBar()">
+        <option value="total">総件数</option><option value="rate">人口10万人あたり</option></select></div>
+      <div class="cw" style="height:420px"><canvas id="c-fi-bar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">地域危険度ランク（東京都都市整備局・震災・建物倒壊リスク）</div>
+      <div class="card-desc">ランク5が最も危険（木造密集市街地）。台東区・荒川区・墨田区など下町エリアが高リスク。</div>
+      <div class="cw" style="height:420px"><canvas id="c-danger"></canvas></div>
+      <div class="leg">
+        <span><span class="ld" style="background:#1D9E75"></span>ランク1（低）</span>
+        <span><span class="ld" style="background:#378ADD"></span>ランク2</span>
+        <span><span class="ld" style="background:#EF9F27"></span>ランク3</span>
+        <span><span class="ld" style="background:#E24B4A"></span>ランク4〜5（高）</span>
+      </div>
+    </div>
+    <p class="src-note">出典：東京消防庁「火災の実態（令和5年版）」、東京都都市整備局「地域危険度一覧表（第9回）」</p>
+  </section>
+
   <section class="sec" id="s-foreign">
     <div class="card">
       <div class="card-title">外国人人口の年次推移（東京都全体）</div>
@@ -166,7 +293,7 @@ a{color:inherit;text-decoration:none}
       <div class="cw" style="height:280px"><canvas id="c-fo-tr"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">外国人割合が高い区（2024年）</div>
+      <div class="card-title">外国人割合が高い区（2024年・上位15）</div>
       <div class="card-desc">新宿区12.5%、豊島区11.2%、荒川区9.7%が上位。</div>
       <div class="cw" style="height:420px"><canvas id="c-fo-bar"></canvas></div>
     </div>
@@ -178,7 +305,6 @@ a{color:inherit;text-decoration:none}
     <p class="src-note">出典：東京都統計局「外国人人口（令和5年）」、出入国在留管理庁「在留外国人統計」</p>
   </section>
 
-  <!-- 子供 -->
   <section class="sec" id="s-children">
     <div class="card">
       <div class="card-title">14歳以下人口の年次推移（東京都全体）</div>
@@ -186,277 +312,274 @@ a{color:inherit;text-decoration:none}
       <div class="cw" style="height:280px"><canvas id="c-ch-tr"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">14歳以下の子供が多い区（2023年）</div>
+      <div class="card-title">14歳以下の子供が多い区（2023年・上位15）</div>
       <div class="card-desc">世田谷区・練馬区・江戸川区が上位。子育て世帯に人気のエリア。</div>
       <div class="cw" style="height:420px"><canvas id="c-ch-bar"></canvas></div>
     </div>
     <p class="src-note">出典：東京都統計局「住民基本台帳による東京都の世帯と人口」</p>
   </section>
 
-  <!-- ランキング -->
   <section class="sec" id="s-ranking">
     <div class="card">
       <div class="frow">
         <label>並び替え：</label>
         <select id="rank-key" onchange="renderRanking()">
+          <option value="safety_score">総合治安スコア（高い＝安全）</option>
           <option value="crime">犯罪件数（多い順）</option>
-          <option value="crime_rate">犯罪率 10万人あたり（多い順）</option>
+          <option value="crime_rate">犯罪率（多い順）</option>
+          <option value="traffic">交通事故（多い順）</option>
+          <option value="fire">火災件数（多い順）</option>
+          <option value="danger_rank">危険度ランク（高い順）</option>
           <option value="foreign_pct">外国人割合（多い順）</option>
           <option value="child_pct">子供割合（多い順）</option>
-          <option value="crime_asc">犯罪件数（少ない順）</option>
+          <option value="crime_asc">犯罪件数（少ない順＝安全）</option>
         </select>
         <input type="text" id="rank-filter" placeholder="区名で絞り込み…" oninput="renderRanking()">
       </div>
       <div class="tbl-wrap">
         <table class="tbl">
           <thead><tr>
-            <th>#</th><th>区・市</th><th>総人口</th>
+            <th>#</th><th>区・市</th><th>安全スコア</th>
             <th>犯罪件数</th><th>犯罪率</th>
-            <th>外国人数</th><th>外国人割合</th>
-            <th>子供数</th><th>子供割合</th>
+            <th>交通事故</th><th>火災件数</th>
+            <th>危険度</th><th>外国人割合</th><th>子供割合</th>
           </tr></thead>
           <tbody id="rank-body"></tbody>
         </table>
       </div>
     </div>
-    <p class="src-note">出典：警視庁（2023年）、東京都統計局（2023〜2024年）</p>
+    <p class="src-note">出典：警視庁・東京消防庁・東京都統計局・東京都都市整備局（2023〜2024年）</p>
   </section>
 </main>
 
 <script>
-// ─── データファイルのパス（GitHub Pages用）─────────────────────────────────
-// リポジトリ名が変わる場合はここを修正してください
-const DATA_URL = './data/tokyo_safety.json';
+const DATA_URL='./data/tokyo_safety.json';
+let G=null;
+let cCrBar=null,cTrBar=null,cFiBar=null;
+const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+const gc=a=>dark?`rgba(255,255,255,${a})`:`rgba(0,0,0,${a})`;
+const TC=dark?'#9c9a92':'#73726c', GC=gc(.07);
 
-let G = null;
-let crimeBarInst = null;
+function safetyScore(w){
+  return Math.max(0,Math.min(100,Math.round(100-(w.crime_rate/35)-(w.traffic_rate/8)-(w.fire_rate/2.8)-(w.danger_rank*3.5))));
+}
+function grade(s){return s>=80?'A':s>=65?'B':s>=50?'C':s>=35?'D':'E';}
+function gradeLabel(g){return {A:'非常に安全',B:'安全',C:'普通',D:'やや注意',E:'要注意'}[g];}
 
-const dark = matchMedia('(prefers-color-scheme:dark)').matches;
-const gc = a => dark ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
-const TC = dark ? '#9c9a92' : '#73726c';
-const GC = gc(0.07);
-
-// ─── 初期化 ───────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.tab').forEach(btn =>
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-      document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
-      btn.classList.add('on');
-      document.getElementById('s-' + btn.dataset.s).classList.add('on');
-    })
-  );
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('s-'+b.dataset.s).classList.add('on');
+  }));
+  setupSearch();
   fetchData();
 });
 
-async function fetchData() {
-  try {
-    const res = await fetch(DATA_URL);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    G = await res.json();
-    document.getElementById('js-loading').style.display = 'none';
-    const d = new Date(G.updated_at);
-    document.getElementById('js-updated').textContent =
-      isNaN(d) ? G.updated_at : d.toLocaleDateString('ja-JP') + ' 更新';
+async function fetchData(){
+  try{
+    const r=await fetch(DATA_URL+'?v='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    G=await r.json();
+    G.wards.forEach(w=>w.safety_score=safetyScore(w));
+    document.getElementById('jl').style.display='none';
+    const d=new Date(G.updated_at);
+    document.getElementById('js-updated').textContent=isNaN(d)?G.updated_at:d.toLocaleDateString('ja-JP')+' 更新';
     renderAll();
-  } catch (e) {
-    document.getElementById('js-loading').style.display = 'none';
-    const el = document.getElementById('js-err');
-    el.style.display = 'block';
-    el.textContent = 'データの読み込みに失敗しました: ' + e.message;
+  }catch(e){
+    document.getElementById('jl').style.display='none';
+    const el=document.getElementById('je');
+    el.style.display='block';el.textContent='データ読み込み失敗: '+e.message;
   }
 }
 
-// ─── Chart共通設定 ────────────────────────────────────────────────────────
-Chart.defaults.font.family = "'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif";
-Chart.defaults.font.size = 12;
-Chart.defaults.color = TC;
-
-const baseOpts = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: {
-    x: { grid: { color: GC }, ticks: { color: TC } },
-    y: { grid: { color: GC }, ticks: { color: TC } }
-  }
-};
-
-function mkLine(id, labels, datasets) {
-  new Chart(document.getElementById(id), {
-    type: 'line', data: { labels, datasets },
-    options: JSON.parse(JSON.stringify(baseOpts))
+/* ─── 検索 ──────────────────────────────────────────── */
+function setupSearch(){
+  const inp=document.getElementById('si'),list=document.getElementById('sl');
+  let fi=-1;
+  inp.addEventListener('input',()=>{
+    const q=inp.value.trim();
+    document.getElementById('sc').style.display=q?'block':'none';
+    if(!q||!G){list.classList.remove('show');return;}
+    const m=G.wards.filter(w=>w.name.includes(q));
+    if(!m.length){list.classList.remove('show');return;}
+    fi=-1;
+    list.innerHTML=m.map(w=>{
+      const hi=w.name.replace(new RegExp(q,'g'),`<span class="hi">${q}</span>`);
+      return `<div class="sug-item" data-n="${w.name}" onclick="selectWard('${w.name}')">${hi}</div>`;
+    }).join('');
+    list.classList.add('show');
   });
-}
-function mkBar(id, labels, data, color, horiz) {
-  return new Chart(document.getElementById(id), {
-    type: 'bar',
-    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 4, borderSkipped: false }] },
-    options: {
-      ...JSON.parse(JSON.stringify(baseOpts)),
-      indexAxis: horiz ? 'y' : 'x',
-      scales: {
-        x: { grid: { color: GC }, ticks: { color: TC, autoSkip: false } },
-        y: { grid: { color: GC }, ticks: { color: TC, autoSkip: false, font: { size: 11 } } }
-      }
-    }
+  inp.addEventListener('keydown',e=>{
+    const items=list.querySelectorAll('.sug-item');
+    if(e.key==='ArrowDown'){fi=Math.min(fi+1,items.length-1);updFocus(items);}
+    else if(e.key==='ArrowUp'){fi=Math.max(fi-1,0);updFocus(items);}
+    else if(e.key==='Enter'&&fi>=0){items[fi].click();}
+    else if(e.key==='Escape'){list.classList.remove('show');}
   });
+  document.addEventListener('click',e=>{if(!e.target.closest('#srow'))list.classList.remove('show');});
+}
+function updFocus(items){items.forEach((el,i)=>el.classList.toggle('focus',i===focIdx));
+  if(focIdx>=0)items[focIdx].scrollIntoView({block:'nearest'});}
+let focIdx=-1;
+
+function selectWard(name){
+  document.getElementById('si').value=name;
+  document.getElementById('sc').style.display='block';
+  document.getElementById('sl').classList.remove('show');
+  document.getElementById('sh').textContent=`「${name}」の詳細データを表示しています`;
+  showWardDetail(name);
 }
 
-// ─── 全描画 ───────────────────────────────────────────────────────────────
-function renderAll() {
+function clearSearch(){
+  document.getElementById('si').value='';
+  document.getElementById('sc').style.display='none';
+  document.getElementById('sh').textContent='区名・市名の一部を入力すると候補が表示されます';
+  document.getElementById('sl').classList.remove('show');
+  document.getElementById('wd').style.display='none';
+}
+
+function showWardDetail(name){
+  const w=G.wards.find(x=>x.name===name);if(!w)return;
+  const s=w.safety_score,g=grade(s);
+  document.getElementById('wd-name').textContent=w.name;
+  document.getElementById('wd-pop').textContent=`総人口 ${w.population.toLocaleString()}人`;
+  document.getElementById('wd-score').textContent=s;
+  const gel=document.getElementById('wd-grade');
+  gel.textContent=`${g}ランク（${gradeLabel(g)}）`;
+  gel.className='wd-grade g'+g;
+
+  document.getElementById('wd-mets').innerHTML=[
+    ['🚨','刑法犯認知件数',w.crime.toLocaleString()+'件',`10万人あたり ${w.crime_rate}件`],
+    ['🚗','交通事故件数',w.traffic.toLocaleString()+'件',`10万人あたり ${w.traffic_rate}件`],
+    ['🔥','火災件数',w.fire.toLocaleString()+'件',`10万人あたり ${w.fire_rate}件`],
+    ['⚠️','地域危険度ランク','ランク '+w.danger_rank,['','低危険','やや低','中程度','やや高','高危険'][w.danger_rank]],
+    ['🌏','外国人人口',w.foreign.toLocaleString()+'人',`総人口の ${w.foreign_pct}%`],
+    ['👦','14歳以下人口',w.child.toLocaleString()+'人',`総人口の ${w.child_pct}%`],
+  ].map(([icon,lbl,val,sub])=>`
+    <div class="wd-met">
+      <div class="wd-met-icon">${icon}</div>
+      <div class="wd-met-lbl">${lbl}</div>
+      <div class="wd-met-val">${val}</div>
+      <div class="wd-met-sub">${sub}</div>
+    </div>`).join('');
+
+  const mC=Math.max(...G.wards.map(x=>x.crime_rate));
+  const mT=Math.max(...G.wards.map(x=>x.traffic_rate));
+  const mF=Math.max(...G.wards.map(x=>x.fire_rate));
+  document.getElementById('wd-bars').innerHTML=[
+    ['犯罪率（10万人あたり）',w.crime_rate,mC,'#E24B4A'],
+    ['交通事故率（10万人あたり）',w.traffic_rate,mT,'#EF9F27'],
+    ['火災率（10万人あたり）',w.fire_rate,mF,'#7F77DD'],
+    ['危険度ランク（×20）',w.danger_rank*20,100,'#888780'],
+  ].map(([lbl,val,mx,col])=>`
+    <div class="wd-br">
+      <div class="wd-br-lbl">${lbl}</div>
+      <div class="wd-br-track"><div class="wd-br-fill" style="width:${Math.round(val/mx*100)}%;background:${col}"></div></div>
+      <div class="wd-br-val">${val}</div>
+    </div>`).join('');
+
+  const wd=document.getElementById('wd');
+  wd.style.display='block';
+  wd.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ─── Chart共通 ─────────────────────────────────────── */
+Chart.defaults.font.family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif";
+Chart.defaults.font.size=12; Chart.defaults.color=TC;
+const bo={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+  scales:{x:{grid:{color:GC},ticks:{color:TC}},y:{grid:{color:GC},ticks:{color:TC}}}};
+function mkLine(id,lbs,ds){new Chart(document.getElementById(id),{type:'line',data:{labels:lbs,datasets:ds},options:JSON.parse(JSON.stringify(bo))});}
+function mkBar(id,lbs,data,col,horiz){
+  return new Chart(document.getElementById(id),{type:'bar',
+    data:{labels:lbs,datasets:[{data,backgroundColor:col,borderRadius:4,borderSkipped:false}]},
+    options:{...JSON.parse(JSON.stringify(bo)),indexAxis:horiz?'y':'x',
+      scales:{x:{grid:{color:GC},ticks:{color:TC,autoSkip:false}},
+              y:{grid:{color:GC},ticks:{color:TC,autoSkip:false,font:{size:11}}}}}});
+}
+
+function renderAll(){
   renderOverview();
-  renderCrimeTrend();
-  renderCrimeBar();
-  renderCrimeType();
-  renderForeignTrend();
-  renderForeignBar();
-  renderForeignPie();
-  renderChildTrend();
-  renderChildBar();
+  renderCrimeTrend();renderCrimeBar();renderCrimeType();
+  renderTrafficTrend();renderTrafficBar();
+  renderFireTrend();renderFireBar();renderDangerBar();
+  renderForeignTrend();renderForeignBar();renderForeignPie();
+  renderChildTrend();renderChildBar();
   renderRanking();
 }
 
-// 概要
-function renderOverview() {
-  const t = G.trend;
-  const yrs = Object.keys(t.crime_total).slice(-5);
-  const cr = yrs.map(y => t.crime_total[y]);
-  const fo = yrs.map(y => t.foreign_total[y] || null);
-  const ch = yrs.map(y => t.child_total[y] || null);
-  const idx = (a, i) => a.map(v => v ? Math.round(v / a[i] * 100) : null);
-
-  document.getElementById('js-mets').innerHTML = `
-    <div class="met"><div class="met-l">刑法犯認知件数（2023年）</div>
-      <div class="met-v">${cr.at(-1).toLocaleString()}</div>
-      <div class="met-t up">▲ 前年比 +8.3%</div></div>
-    <div class="met"><div class="met-l">外国人人口（2023年）</div>
-      <div class="met-v">${fo.at(-1).toLocaleString()}</div>
-      <div class="met-t up">▲ 前年比 +11.8%</div></div>
-    <div class="met"><div class="met-l">14歳以下人口（2023年）</div>
-      <div class="met-v">${(ch.at(-1)/10000).toFixed(0)}万人</div>
-      <div class="met-t dn">▼ 前年比 −0.8%</div></div>
-    <div class="met"><div class="met-l">人口10万人あたり犯罪件数</div>
-      <div class="met-v">697</div>
-      <div class="met-t">2019年比 −12%</div></div>`;
-
-  mkLine('c-ov', yrs, [
-    { data: idx(cr,0), borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.1)', tension:.4, fill:true, pointRadius:4 },
-    { data: idx(fo,0), borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.1)', tension:.4, fill:true, pointRadius:4 },
-    { data: idx(ch,0), borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,.1)', tension:.4, fill:true, pointRadius:4 },
+function renderOverview(){
+  const t=G.trend,yrs=Object.keys(t.crime_total).slice(-5);
+  const cr=yrs.map(y=>t.crime_total[y]);
+  const tr=yrs.map(y=>t.traffic_total?.[y]??null);
+  const fi=yrs.map(y=>t.fire_total?.[y]??null);
+  const fo=yrs.map(y=>t.foreign_total?.[y]??null);
+  const ch=yrs.map(y=>t.child_total?.[y]??null);
+  const idx=(a,i)=>a.map(v=>v!=null?Math.round(v/a[i]*100):null);
+  document.getElementById('jm').innerHTML=`
+    <div class="met"><div class="met-l">刑法犯認知件数（2023年）</div><div class="met-v">${cr.at(-1).toLocaleString()}</div><div class="met-t up">▲ 前年比 +8.3%</div></div>
+    <div class="met"><div class="met-l">交通事故件数（2023年）</div><div class="met-v">31,385</div><div class="met-t up">▲ +4.0%（全国1位）</div></div>
+    <div class="met"><div class="met-l">火災件数（2023年）</div><div class="met-v">4,102</div><div class="met-t up">▲ 前年比 +3.7%</div></div>
+    <div class="met"><div class="met-l">外国人人口（2023年）</div><div class="met-v">${fo.at(-1).toLocaleString()}</div><div class="met-t up">▲ +11.8%（過去最多）</div></div>
+    <div class="met"><div class="met-l">14歳以下人口（2023年）</div><div class="met-v">${(ch.at(-1)/10000).toFixed(0)}万人</div><div class="met-t dn">▼ 前年比 −0.8%</div></div>`;
+  mkLine('c-ov',yrs,[
+    {data:idx(cr,0),borderColor:'#E24B4A',backgroundColor:'rgba(226,75,74,.08)',tension:.4,fill:true,pointRadius:4},
+    {data:idx(tr,0),borderColor:'#EF9F27',backgroundColor:'rgba(239,159,39,.08)',tension:.4,fill:true,pointRadius:4},
+    {data:idx(fi,0),borderColor:'#7F77DD',backgroundColor:'rgba(127,119,221,.08)',tension:.4,fill:true,pointRadius:4},
+    {data:idx(fo,0),borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,.08)',tension:.4,fill:true,pointRadius:4},
+    {data:idx(ch,0),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,.08)',tension:.4,fill:true,pointRadius:4},
   ]);
+  const top=[...G.wards].sort((a,b)=>b.safety_score-a.safety_score);
+  const cols=top.map(w=>{const g=grade(w.safety_score);return g==='A'?'#1D9E75':g==='B'?'#378ADD':g==='C'?'#EF9F27':g==='D'?'#E24B4A':'#9b2020';});
+  mkBar('c-score',top.map(w=>w.name),top.map(w=>w.safety_score),cols,true);
 }
 
-// 犯罪推移
-function renderCrimeTrend() {
-  const t = G.trend.crime_total;
-  const yrs = Object.keys(t);
-  mkLine('c-crime-tr', yrs, [{
-    data: yrs.map(y => t[y]),
-    borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,.1)', tension:.3, fill:true, pointRadius:4
-  }]);
-}
+function renderCrimeTrend(){const t=G.trend.crime_total,y=Object.keys(t);mkLine('c-cr-tr',y,[{data:y.map(k=>t[k]),borderColor:'#E24B4A',backgroundColor:'rgba(226,75,74,.1)',tension:.3,fill:true,pointRadius:4}]);}
+function renderCrimeBar(){if(cCrBar)cCrBar.destroy();const m=document.getElementById('crime-mode').value;const s=[...G.wards].sort((a,b)=>m==='rate'?b.crime_rate-a.crime_rate:b.crime-a.crime).slice(0,15);cCrBar=mkBar('c-cr-bar',s.map(w=>w.name),s.map(w=>m==='rate'?w.crime_rate:w.crime),'#E24B4A',true);}
+function renderCrimeType(){const ls=Object.keys(G.crime_type),d=Object.values(G.crime_type);new Chart(document.getElementById('c-cr-type'),{type:'doughnut',data:{labels:ls,datasets:[{data:d,borderWidth:2,borderColor:dark?'#232320':'#fff',backgroundColor:['#E24B4A','#EF9F27','#378ADD','#7F77DD','#D4537E','#888780']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:TC,font:{size:12},padding:12}}}}});}
 
-// 犯罪バー（切り替え対応）
-function renderCrimeBar() {
-  if (crimeBarInst) crimeBarInst.destroy();
-  const mode = document.getElementById('crime-mode').value;
-  const sorted = [...G.wards]
-    .sort((a,b) => mode==='rate' ? b.crime_rate-a.crime_rate : b.crime-a.crime)
-    .slice(0,15);
-  crimeBarInst = mkBar('c-crime-bar',
-    sorted.map(w=>w.name),
-    sorted.map(w => mode==='rate' ? w.crime_rate : w.crime),
-    '#E24B4A', true);
-}
+function renderTrafficTrend(){const t=G.trend.traffic_total;if(!t)return;const y=Object.keys(t);mkLine('c-tr-tr',y,[{data:y.map(k=>t[k]),borderColor:'#EF9F27',backgroundColor:'rgba(239,159,39,.1)',tension:.3,fill:true,pointRadius:4}]);}
+function renderTrafficBar(){if(cTrBar)cTrBar.destroy();const m=document.getElementById('traffic-mode').value;const s=[...G.wards].sort((a,b)=>m==='rate'?b.traffic_rate-a.traffic_rate:b.traffic-a.traffic).slice(0,15);cTrBar=mkBar('c-tr-bar',s.map(w=>w.name),s.map(w=>m==='rate'?w.traffic_rate:w.traffic),'#EF9F27',true);}
 
-// 犯罪種別
-function renderCrimeType() {
-  const labs = Object.keys(G.crime_type);
-  const data = Object.values(G.crime_type);
-  new Chart(document.getElementById('c-crime-type'), {
-    type: 'doughnut',
-    data: { labels: labs, datasets: [{
-      data, borderWidth:2,
-      borderColor: dark ? '#242422' : '#fff',
-      backgroundColor:['#E24B4A','#EF9F27','#378ADD','#7F77DD','#D4537E','#888780']
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'right', labels:{ color:TC, font:{size:12}, padding:12 } } } }
-  });
-}
+function renderFireTrend(){const t=G.trend.fire_total;if(!t)return;const y=Object.keys(t);mkLine('c-fi-tr',y,[{data:y.map(k=>t[k]),borderColor:'#7F77DD',backgroundColor:'rgba(127,119,221,.1)',tension:.3,fill:true,pointRadius:4}]);}
+function renderFireBar(){if(cFiBar)cFiBar.destroy();const m=document.getElementById('fire-mode').value;const s=[...G.wards].sort((a,b)=>m==='rate'?b.fire_rate-a.fire_rate:b.fire-a.fire).slice(0,15);cFiBar=mkBar('c-fi-bar',s.map(w=>w.name),s.map(w=>m==='rate'?w.fire_rate:w.fire),'#7F77DD',true);}
+function renderDangerBar(){const s=[...G.wards].sort((a,b)=>b.danger_rank-a.danger_rank).slice(0,15);const cols=s.map(w=>w.danger_rank>=4?'#E24B4A':w.danger_rank===3?'#EF9F27':w.danger_rank===2?'#378ADD':'#1D9E75');mkBar('c-danger',s.map(w=>w.name),s.map(w=>w.danger_rank),cols,true);}
 
-// 外国人推移
-function renderForeignTrend() {
-  const t = G.trend.foreign_total;
-  const yrs = Object.keys(t);
-  mkLine('c-fo-tr', yrs, [{
-    data: yrs.map(y=>t[y]),
-    borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.1)', tension:.4, fill:true, pointRadius:4
-  }]);
-}
+function renderForeignTrend(){const t=G.trend.foreign_total,y=Object.keys(t);mkLine('c-fo-tr',y,[{data:y.map(k=>t[k]),borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,.1)',tension:.4,fill:true,pointRadius:4}]);}
+function renderForeignBar(){const s=[...G.wards].sort((a,b)=>b.foreign_pct-a.foreign_pct).slice(0,15);mkBar('c-fo-bar',s.map(w=>w.name),s.map(w=>w.foreign_pct),'#378ADD',true);}
+function renderForeignPie(){const ls=Object.keys(G.foreign_nationality),d=Object.values(G.foreign_nationality);new Chart(document.getElementById('c-fo-pie'),{type:'doughnut',data:{labels:ls,datasets:[{data:d,borderWidth:2,borderColor:dark?'#232320':'#fff',backgroundColor:['#E24B4A','#EF9F27','#378ADD','#1D9E75','#7F77DD','#D4537E','#888780']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:TC,font:{size:12},padding:10}}}}});}
 
-// 外国人バー
-function renderForeignBar() {
-  const s = [...G.wards].sort((a,b)=>b.foreign_pct-a.foreign_pct).slice(0,15);
-  mkBar('c-fo-bar', s.map(w=>w.name), s.map(w=>w.foreign_pct), '#378ADD', true);
-}
+function renderChildTrend(){const t=G.trend.child_total,y=Object.keys(t);mkLine('c-ch-tr',y,[{data:y.map(k=>t[k]),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,.1)',tension:.4,fill:true,pointRadius:4}]);}
+function renderChildBar(){const s=[...G.wards].sort((a,b)=>b.child-a.child).slice(0,15);mkBar('c-ch-bar',s.map(w=>w.name),s.map(w=>Math.round(w.child/1000)),'#1D9E75',true);}
 
-// 外国人円グラフ
-function renderForeignPie() {
-  const labs = Object.keys(G.foreign_nationality);
-  const data = Object.values(G.foreign_nationality);
-  new Chart(document.getElementById('c-fo-pie'), {
-    type:'doughnut',
-    data:{ labels:labs, datasets:[{
-      data, borderWidth:2,
-      borderColor: dark ? '#242422' : '#fff',
-      backgroundColor:['#E24B4A','#EF9F27','#378ADD','#1D9E75','#7F77DD','#D4537E','#888780']
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'right', labels:{ color:TC, font:{size:12}, padding:10 } } } }
-  });
-}
-
-// 子供推移
-function renderChildTrend() {
-  const t = G.trend.child_total;
-  const yrs = Object.keys(t);
-  mkLine('c-ch-tr', yrs, [{
-    data: yrs.map(y=>t[y]),
-    borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,.1)', tension:.4, fill:true, pointRadius:4
-  }]);
-}
-
-// 子供バー
-function renderChildBar() {
-  const s = [...G.wards].sort((a,b)=>b.child-a.child).slice(0,15);
-  mkBar('c-ch-bar', s.map(w=>w.name), s.map(w=>Math.round(w.child/1000)), '#1D9E75', true);
-}
-
-// ランキング
-function renderRanking() {
-  const key = document.getElementById('rank-key').value;
-  const filt = (document.getElementById('rank-filter').value||'').trim();
-  const asc = key.endsWith('_asc');
-  const sk = asc ? key.replace('_asc','') : key;
-  let wards = [...G.wards];
-  if (filt) wards = wards.filter(w => w.name.includes(filt));
-  wards.sort((a,b) => asc ? a[sk]-b[sk] : b[sk]-a[sk]);
-  const mC = Math.max(...G.wards.map(w=>w.crime));
-  const mF = Math.max(...G.wards.map(w=>w.foreign_pct));
-  const mCh = Math.max(...G.wards.map(w=>w.child_pct));
-  document.getElementById('rank-body').innerHTML = wards.map((w,i)=>`
-    <tr>
-      <td style="color:var(--t3);font-size:12px">${i+1}</td>
-      <td style="font-weight:700">${w.name}</td>
-      <td>${w.population.toLocaleString()}</td>
-      <td>${w.crime.toLocaleString()}<span class="bar" style="width:${Math.round(w.crime/mC*48)}px;background:#E24B4A88"></span></td>
-      <td>${w.crime_rate.toLocaleString()}</td>
-      <td>${w.foreign.toLocaleString()}</td>
-      <td>${w.foreign_pct}%<span class="bar" style="width:${Math.round(w.foreign_pct/mF*48)}px;background:#378ADD88"></span></td>
-      <td>${w.child.toLocaleString()}</td>
-      <td>${w.child_pct}%<span class="bar" style="width:${Math.round(w.child_pct/mCh*48)}px;background:#1D9E7588"></span></td>
-    </tr>`).join('');
+function renderRanking(){
+  const key=document.getElementById('rank-key').value;
+  const filt=(document.getElementById('rank-filter').value||'').trim();
+  const asc=key.endsWith('_asc'),sk=asc?key.replace('_asc',''):key;
+  let wards=[...G.wards];
+  if(filt)wards=wards.filter(w=>w.name.includes(filt));
+  wards.sort((a,b)=>asc?a[sk]-b[sk]:b[sk]-a[sk]);
+  const mC=Math.max(...G.wards.map(w=>w.crime));
+  const mT=Math.max(...G.wards.map(w=>w.traffic));
+  const mF=Math.max(...G.wards.map(w=>w.fire));
+  const mFo=Math.max(...G.wards.map(w=>w.foreign_pct));
+  const mCh=Math.max(...G.wards.map(w=>w.child_pct));
+  document.getElementById('rank-body').innerHTML=wards.map((w,i)=>{
+    const g=grade(w.safety_score),dr='dr'+w.danger_rank;
+    return `<tr>
+      <td style="color:var(--t3);font-size:11px">${i+1}</td>
+      <td class="nc" onclick="selectWard('${w.name}')">${w.name}</td>
+      <td><span class="sbadge sb${g}">${w.safety_score}</span></td>
+      <td>${w.crime.toLocaleString()}<span class="bar" style="width:${Math.round(w.crime/mC*40)}px;background:#E24B4A88"></span></td>
+      <td>${w.crime_rate}</td>
+      <td>${w.traffic.toLocaleString()}<span class="bar" style="width:${Math.round(w.traffic/mT*40)}px;background:#EF9F2788"></span></td>
+      <td>${w.fire.toLocaleString()}<span class="bar" style="width:${Math.round(w.fire/mF*40)}px;background:#7F77DD88"></span></td>
+      <td><span class="dr ${dr}">${w.danger_rank}</span></td>
+      <td>${w.foreign_pct}%<span class="bar" style="width:${Math.round(w.foreign_pct/mFo*40)}px;background:#378ADD88"></span></td>
+      <td>${w.child_pct}%<span class="bar" style="width:${Math.round(w.child_pct/mCh*40)}px;background:#1D9E7588"></span></td>
+    </tr>`;
+  }).join('');
 }
 </script>
 </body>
