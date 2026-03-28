@@ -1,0 +1,166 @@
+/* ─── CSS変数 ─────────────────────────────────────────── */
+:root {
+  --bg-0: #ffffff;
+  --bg-1: #f6f5f0;
+  --bg-2: #eeede8;
+  --text-1: #1a1a18;
+  --text-2: #6b6a64;
+  --text-3: #9b9a94;
+  --border-1: rgba(0,0,0,0.12);
+  --border-2: rgba(0,0,0,0.2);
+  --accent-crime: #E24B4A;
+  --accent-foreign: #378ADD;
+  --accent-child: #1D9E75;
+  --accent-neutral: #888780;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-0: #1c1c1a;
+    --bg-1: #242422;
+    --bg-2: #2e2e2c;
+    --text-1: #e8e6de;
+    --text-2: #9c9a92;
+    --text-3: #6b6a64;
+    --border-1: rgba(255,255,255,0.1);
+    --border-2: rgba(255,255,255,0.18);
+  }
+}
+
+/* ─── リセット ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  background: var(--bg-1);
+  color: var(--text-1);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ─── ヘッダー ────────────────────────────────────────── */
+.header {
+  background: var(--bg-0);
+  border-bottom: 0.5px solid var(--border-1);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-inner {
+  max-width: 960px; margin: 0 auto;
+  padding: .75rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap;
+}
+.site-title { font-size: 16px; font-weight: 600; color: var(--text-1); }
+.site-desc  { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.header-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.updated-label { color: var(--text-3); }
+.updated-val { color: var(--text-2); font-weight: 500; }
+.refresh-btn {
+  padding: 5px 12px; border: 0.5px solid var(--border-2);
+  border-radius: 20px; background: transparent; color: var(--text-2);
+  font-size: 12px; cursor: pointer; transition: all .15s;
+}
+.refresh-btn:hover { background: var(--bg-2); }
+
+/* ─── メイン ──────────────────────────────────────────── */
+.main { max-width: 960px; margin: 0 auto; padding: 1.25rem; }
+
+/* ─── タブ ────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.tab {
+  padding: 6px 16px; border: 0.5px solid var(--border-1);
+  border-radius: 20px; background: transparent; color: var(--text-2);
+  font-size: 13px; cursor: pointer; transition: all .15s;
+}
+.tab:hover { border-color: var(--border-2); color: var(--text-1); }
+.tab.active {
+  background: var(--text-1); color: var(--bg-0);
+  border-color: transparent;
+}
+
+/* ─── セクション ──────────────────────────────────────── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ─── ローディング ────────────────────────────────────── */
+.loading {
+  text-align: center; padding: 3rem;
+  color: var(--text-3); font-size: 14px;
+}
+.error-msg {
+  background: #fcebeb; border: 0.5px solid #f09595;
+  border-radius: var(--radius-sm); padding: .75rem 1rem;
+  color: #a32d2d; font-size: 13px; margin-bottom: 1rem;
+}
+
+/* ─── メトリクスカード ────────────────────────────────── */
+.metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px; margin-bottom: 1.25rem;
+}
+.metric {
+  background: var(--bg-2); border-radius: var(--radius-sm);
+  padding: .875rem 1rem;
+}
+.metric-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+.metric-val   { font-size: 22px; font-weight: 600; color: var(--text-1); line-height: 1.2; }
+.metric-trend { font-size: 11px; margin-top: 4px; }
+.up   { color: #c04828; }
+.down { color: #1D9E75; }
+
+/* ─── チャートカード ──────────────────────────────────── */
+.chart-card {
+  background: var(--bg-0); border: 0.5px solid var(--border-1);
+  border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;
+}
+.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.chart-desc  {
+  font-size: 12px; color: var(--text-2); margin-bottom: 1rem;
+}
+.chart-desc select {
+  font-size: 12px; padding: 3px 6px; border: 0.5px solid var(--border-2);
+  border-radius: 6px; background: var(--bg-2); color: var(--text-1);
+  margin-left: 4px;
+}
+.chart-wrap { position: relative; width: 100%; }
+.legend {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  margin-top: .75rem; font-size: 12px; color: var(--text-2);
+}
+.leg {
+  width: 10px; height: 10px; border-radius: 2px;
+  display: inline-block; margin-right: 4px; vertical-align: middle;
+}
+
+/* ─── ランキングテーブル ───────────────────────────────── */
+.rank-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rank-table th {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  padding: 6px 10px; border-bottom: 0.5px solid var(--border-1);
+  text-align: left; white-space: nowrap;
+}
+.rank-table td {
+  padding: 8px 10px; border-bottom: 0.5px solid var(--border-1);
+  color: var(--text-1); white-space: nowrap;
+}
+.rank-table tr:last-child td { border-bottom: none; }
+.rank-table tr:hover td { background: var(--bg-2); }
+.bar-mini {
+  height: 6px; border-radius: 3px;
+  display: inline-block; vertical-align: middle; margin-left: 6px;
+  min-width: 2px;
+}
+
+/* ─── 出典 ────────────────────────────────────────────── */
+.src {
+  font-size: 11px; color: var(--text-3); margin-top: .5rem; margin-bottom: 1rem;
+}
+
+/* ─── レスポンシブ ────────────────────────────────────── */
+@media (max-width: 600px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .metric-val { font-size: 18px; }
+}

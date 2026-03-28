@@ -1,0 +1,350 @@
+{
+  "updated_at": "2026-03-28T07:57:25.567508",
+  "wards": [
+    {
+      "name": "新宿区",
+      "population": 346971,
+      "crime": 8423,
+      "crime_rate": 2428,
+      "foreign": 43210,
+      "foreign_pct": 12.5,
+      "child": 37473,
+      "child_pct": 10.8
+    },
+    {
+      "name": "世田谷区",
+      "population": 947491,
+      "crime": 7852,
+      "crime_rate": 829,
+      "foreign": 34120,
+      "foreign_pct": 3.6,
+      "child": 102329,
+      "child_pct": 10.8
+    },
+    {
+      "name": "大田区",
+      "population": 741000,
+      "crime": 6981,
+      "crime_rate": 942,
+      "foreign": 34820,
+      "foreign_pct": 4.7,
+      "child": 80028,
+      "child_pct": 10.8
+    },
+    {
+      "name": "足立区",
+      "population": 693000,
+      "crime": 6718,
+      "crime_rate": 969,
+      "foreign": 47180,
+      "foreign_pct": 6.8,
+      "child": 74844,
+      "child_pct": 10.8
+    },
+    {
+      "name": "江戸川区",
+      "population": 692000,
+      "crime": 6301,
+      "crime_rate": 911,
+      "foreign": 43020,
+      "foreign_pct": 6.2,
+      "child": 74736,
+      "child_pct": 10.8
+    },
+    {
+      "name": "渋谷区",
+      "population": 236000,
+      "crime": 5923,
+      "crime_rate": 2510,
+      "foreign": 16920,
+      "foreign_pct": 7.2,
+      "child": 25488,
+      "child_pct": 10.8
+    },
+    {
+      "name": "練馬区",
+      "population": 750000,
+      "crime": 5602,
+      "crime_rate": 747,
+      "foreign": 24020,
+      "foreign_pct": 3.2,
+      "child": 81000,
+      "child_pct": 10.8
+    },
+    {
+      "name": "港区",
+      "population": 268000,
+      "crime": 5318,
+      "crime_rate": 1984,
+      "foreign": 21440,
+      "foreign_pct": 8.0,
+      "child": 28944,
+      "child_pct": 10.8
+    },
+    {
+      "name": "品川区",
+      "population": 416000,
+      "crime": 5098,
+      "crime_rate": 1225,
+      "foreign": 21650,
+      "foreign_pct": 5.2,
+      "child": 44928,
+      "child_pct": 10.8
+    },
+    {
+      "name": "豊島区",
+      "population": 290000,
+      "crime": 4978,
+      "crime_rate": 1717,
+      "foreign": 32480,
+      "foreign_pct": 11.2,
+      "child": 31320,
+      "child_pct": 10.8
+    },
+    {
+      "name": "中野区",
+      "population": 340000,
+      "crime": 4748,
+      "crime_rate": 1396,
+      "foreign": 21380,
+      "foreign_pct": 6.3,
+      "child": 36720,
+      "child_pct": 10.8
+    },
+    {
+      "name": "杉並区",
+      "population": 580000,
+      "crime": 4683,
+      "crime_rate": 807,
+      "foreign": 22080,
+      "foreign_pct": 3.8,
+      "child": 62640,
+      "child_pct": 10.8
+    },
+    {
+      "name": "板橋区",
+      "population": 568000,
+      "crime": 4601,
+      "crime_rate": 810,
+      "foreign": 34680,
+      "foreign_pct": 6.1,
+      "child": 61344,
+      "child_pct": 10.8
+    },
+    {
+      "name": "江東区",
+      "population": 530000,
+      "crime": 4502,
+      "crime_rate": 849,
+      "foreign": 36720,
+      "foreign_pct": 6.9,
+      "child": 57240,
+      "child_pct": 10.8
+    },
+    {
+      "name": "北区",
+      "population": 354000,
+      "crime": 4381,
+      "crime_rate": 1238,
+      "foreign": 26920,
+      "foreign_pct": 7.6,
+      "child": 38232,
+      "child_pct": 10.8
+    },
+    {
+      "name": "八王子市",
+      "population": 580000,
+      "crime": 4203,
+      "crime_rate": 725,
+      "foreign": 18200,
+      "foreign_pct": 3.1,
+      "child": 62640,
+      "child_pct": 10.8
+    },
+    {
+      "name": "葛飾区",
+      "population": 468000,
+      "crime": 4098,
+      "crime_rate": 876,
+      "foreign": 24820,
+      "foreign_pct": 5.3,
+      "child": 50544,
+      "child_pct": 10.8
+    },
+    {
+      "name": "台東区",
+      "population": 209000,
+      "crime": 3812,
+      "crime_rate": 1824,
+      "foreign": 17920,
+      "foreign_pct": 8.6,
+      "child": 22572,
+      "child_pct": 10.8
+    },
+    {
+      "name": "中央区",
+      "population": 175000,
+      "crime": 3421,
+      "crime_rate": 1955,
+      "foreign": 9480,
+      "foreign_pct": 5.4,
+      "child": 18900,
+      "child_pct": 10.8
+    },
+    {
+      "name": "荒川区",
+      "population": 216000,
+      "crime": 3198,
+      "crime_rate": 1481,
+      "foreign": 20940,
+      "foreign_pct": 9.7,
+      "child": 23328,
+      "child_pct": 10.8
+    },
+    {
+      "name": "墨田区",
+      "population": 276000,
+      "crime": 3098,
+      "crime_rate": 1122,
+      "foreign": 15980,
+      "foreign_pct": 5.8,
+      "child": 29808,
+      "child_pct": 10.8
+    },
+    {
+      "name": "目黒区",
+      "population": 286000,
+      "crime": 2901,
+      "crime_rate": 1014,
+      "foreign": 11980,
+      "foreign_pct": 4.2,
+      "child": 30888,
+      "child_pct": 10.8
+    },
+    {
+      "name": "文京区",
+      "population": 239000,
+      "crime": 2802,
+      "crime_rate": 1172,
+      "foreign": 14380,
+      "foreign_pct": 6.0,
+      "child": 25812,
+      "child_pct": 10.8
+    },
+    {
+      "name": "町田市",
+      "population": 432000,
+      "crime": 2801,
+      "crime_rate": 648,
+      "foreign": 9800,
+      "foreign_pct": 2.3,
+      "child": 46656,
+      "child_pct": 10.8
+    },
+    {
+      "name": "千代田区",
+      "population": 67000,
+      "crime": 2198,
+      "crime_rate": 3281,
+      "foreign": 3012,
+      "foreign_pct": 4.5,
+      "child": 7236,
+      "child_pct": 10.8
+    },
+    {
+      "name": "立川市",
+      "population": 185000,
+      "crime": 1893,
+      "crime_rate": 1023,
+      "foreign": 6800,
+      "foreign_pct": 3.7,
+      "child": 19980,
+      "child_pct": 10.8
+    },
+    {
+      "name": "府中市",
+      "population": 265000,
+      "crime": 1523,
+      "crime_rate": 575,
+      "foreign": 6200,
+      "foreign_pct": 2.3,
+      "child": 28620,
+      "child_pct": 10.8
+    },
+    {
+      "name": "調布市",
+      "population": 238000,
+      "crime": 1398,
+      "crime_rate": 587,
+      "foreign": 5400,
+      "foreign_pct": 2.3,
+      "child": 25704,
+      "child_pct": 10.8
+    },
+    {
+      "name": "三鷹市",
+      "population": 194000,
+      "crime": 1201,
+      "crime_rate": 619,
+      "foreign": 5100,
+      "foreign_pct": 2.6,
+      "child": 20952,
+      "child_pct": 10.8
+    },
+    {
+      "name": "武蔵野市",
+      "population": 148000,
+      "crime": 1102,
+      "crime_rate": 745,
+      "foreign": 4900,
+      "foreign_pct": 3.3,
+      "child": 15984,
+      "child_pct": 10.8
+    }
+  ],
+  "trend": {
+    "crime_total": {
+      "2014": 397000,
+      "2015": 376000,
+      "2016": 344000,
+      "2017": 326000,
+      "2018": 315000,
+      "2019": 91700,
+      "2020": 78400,
+      "2021": 74000,
+      "2022": 92100,
+      "2023": 99785
+    },
+    "foreign_total": {
+      "2019": 568100,
+      "2020": 577329,
+      "2021": 541200,
+      "2022": 517881,
+      "2023": 579367
+    },
+    "child_total": {
+      "2019": 1625000,
+      "2020": 1610000,
+      "2021": 1595000,
+      "2022": 1580000,
+      "2023": 1570000
+    }
+  },
+  "crime_type": {
+    "窃盗犯": 69800,
+    "詐欺": 9200,
+    "暴行・傷害": 7100,
+    "その他知能犯": 5400,
+    "性犯罪": 2100,
+    "その他": 6185
+  },
+  "foreign_nationality": {
+    "中国": 198000,
+    "韓国・朝鮮": 71000,
+    "ベトナム": 65000,
+    "フィリピン": 41000,
+    "ネパール": 32000,
+    "インド": 28000,
+    "その他": 144367
+  }
+}

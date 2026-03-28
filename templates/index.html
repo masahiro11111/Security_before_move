@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東京都 地域安全ダッシュボード</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <h1 class="site-title">東京都 地域安全・人口動態ダッシュボード</h1>
+      <p class="site-desc">引越し前に確認できる治安・人口指標 ／ 出典：警視庁・東京都統計局・総務省</p>
+    </div>
+    <div class="header-meta">
+      <span class="updated-label">最終更新：</span>
+      <span id="updated-at" class="updated-val">読み込み中…</span>
+      <button class="refresh-btn" onclick="refreshData()" title="データを再取得">↺ 更新</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- タブ -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="overview">概要</button>
+    <button class="tab" data-tab="crime">犯罪件数</button>
+    <button class="tab" data-tab="foreign">外国人人口</button>
+    <button class="tab" data-tab="children">子供の数</button>
+    <button class="tab" data-tab="ranking">区市町村ランキング</button>
+  </nav>
+
+  <!-- ローディング -->
+  <div id="loading" class="loading">データを読み込んでいます…</div>
+  <div id="error-msg" class="error-msg" style="display:none"></div>
+
+  <!-- 概要 -->
+  <section class="section active" id="tab-overview">
+    <div class="metrics" id="metrics-overview"></div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">主要3指標の年次推移（2019〜2023年）</div>
+        <div class="chart-desc">2019年を100とした指数。犯罪はコロナ禍で急減後に反転、外国人は2023年に過去最多。</div>
+      </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="c-overview"></canvas></div>
+      <div class="legend">
+        <span><span class="leg" style="background:#E24B4A"></span>刑法犯認知件数</span>
+        <span><span class="leg" style="background:#378ADD"></span>外国人人口</span>
+        <span><span class="leg" style="background:#1D9E75"></span>14歳以下人口</span>
+      </div>
+    </div>
+    <p class="src">出典：警視庁「東京の犯罪（令和5年版）」、東京都統計局「外国人人口」「住民基本台帳」</p>
+  </section>
+
+  <!-- 犯罪件数 -->
+  <section class="section" id="tab-crime">
+    <div class="chart-card">
+      <div class="chart-title">刑法犯認知件数の長期推移（東京都全体）</div>
+      <div class="chart-desc">2014年をピークに大幅減少。コロナ禍の2021年に底を打ち、2022年より増加傾向。</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="c-crime-trend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">区別 刑法犯認知件数（2023年）</div>
+      <div class="chart-desc">
+        <label>表示切替：
+          <select id="crime-mode" onchange="renderCrimeBar()">
+            <option value="total">総件数</option>
+            <option value="rate">人口10万人あたり</option>
+          </select>
+        </label>
+      </div>
+      <div class="chart-wrap" style="height:400px"><canvas id="c-crime-bar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">犯罪種別の構成（東京都・2023年）</div>
+      <div class="chart-desc">窃盗犯が約70%。詐欺・暴行傷害が続く。</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="c-crime-type"></canvas></div>
+    </div>
+    <p class="src">出典：警視庁「東京の犯罪（令和5年版）」「犯罪発生情報（年計）」</p>
+  </section>
+
+  <!-- 外国人人口 -->
+  <section class="section" id="tab-foreign">
+    <div class="chart-card">
+      <div class="chart-title">外国人人口の年次推移（東京都全体）</div>
+      <div class="chart-desc">2020〜2022年はコロナ禍で減少。2023年に579,367人と過去最多を更新。</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="c-foreign-trend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">外国人割合が高い区（2024年）</div>
+      <div class="chart-desc">新宿区12.6%、豊島区11.2%、荒川区9.7%が上位。</div>
+      <div class="chart-wrap" style="height:380px"><canvas id="c-foreign-bar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">国籍・地域別 外国人人口構成（東京都・2023年）</div>
+      <div class="chart-desc">中国籍が最多（約34%）。ベトナム・ネパールは近年増加顕著。</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="c-foreign-pie"></canvas></div>
+    </div>
+    <p class="src">出典：東京都統計局「外国人人口（令和5年）」、出入国在留管理庁「在留外国人統計」</p>
+  </section>
+
+  <!-- 子供の数 -->
+  <section class="section" id="tab-children">
+    <div class="chart-card">
+      <div class="chart-title">14歳以下人口の年次推移（東京都全体）</div>
+      <div class="chart-desc">少子化が続き、5年で約55,000人減少。</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="c-child-trend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">14歳以下の子供が多い区（2023年）</div>
+      <div class="chart-desc">世田谷区・練馬区・江戸川区が上位。子育て環境の充実したエリア。</div>
+      <div class="chart-wrap" style="height:380px"><canvas id="c-child-bar"></canvas></div>
+    </div>
+    <p class="src">出典：東京都統計局「住民基本台帳による東京都の世帯と人口」</p>
+  </section>
+
+  <!-- ランキング -->
+  <section class="section" id="tab-ranking">
+    <div class="chart-card" style="padding:1rem 1.25rem">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+        <label style="font-size:13px;color:var(--text-2)">並び替え：</label>
+        <select id="rank-key" onchange="renderRanking()" style="font-size:13px;padding:5px 8px;border:0.5px solid var(--border-2);border-radius:8px;background:var(--bg-2);color:var(--text-1)">
+          <option value="crime">犯罪件数（多い順）</option>
+          <option value="crime_rate">犯罪率 10万人あたり（多い順）</option>
+          <option value="foreign_pct">外国人割合（多い順）</option>
+          <option value="child_pct">子供割合（多い順）</option>
+          <option value="crime_asc">犯罪件数（少ない順）</option>
+        </select>
+        <input type="text" id="rank-filter" placeholder="区名で絞り込み…" oninput="renderRanking()" style="font-size:13px;padding:5px 10px;border:0.5px solid var(--border-2);border-radius:8px;background:var(--bg-2);color:var(--text-1);width:160px">
+      </div>
+      <div style="overflow-x:auto">
+        <table class="rank-table">
+          <thead>
+            <tr>
+              <th>#</th><th>区・市</th><th>総人口</th>
+              <th>犯罪件数</th><th>犯罪率</th>
+              <th>外国人数</th><th>外国人割合</th>
+              <th>子供数</th><th>子供割合</th>
+            </tr>
+          </thead>
+          <tbody id="rank-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="src">出典：警視庁（2023年）、東京都統計局（2023〜2024年）</p>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
